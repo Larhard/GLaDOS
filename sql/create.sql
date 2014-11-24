@@ -5,20 +5,12 @@ CREATE TABLE users (
     name VARCHAR(250),
     surname VARCHAR(250),
     password VARCHAR(250)
-
     CHECK (email LIKE '%@%.%')
 );
 
 CREATE TABLE users_presence (
     user_id INTEGER REFERENCES users ON DELETE CASCADE,
     time TIMESTAMP NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE programs (
-    program_id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users ON DELETE CASCADE,
-    upload_time TIMESTAMP NOT NULL DEFAULT NOW(),
-    source_code TEXT
 );
 
 CREATE TABLE contests (
@@ -28,13 +20,23 @@ CREATE TABLE contests (
     default_judge INTEGER
 );
 
+CREATE TABLE programs (
+    program_id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users ON DELETE CASCADE,
+    contest_id INTEGER REFERENCES contests ON DELETE SET NULL,
+    upload_time TIMESTAMP NOT NULL DEFAULT NOW(),
+    source_code TEXT
+);
+
 CREATE TABLE judges (
     judge_id SERIAL PRIMARY KEY,
-    path VARCHAR(250) NOT NULL
+    path VARCHAR(250) NOT NULL,
+    contest_id INTEGER NOT NULL REFERENCES contests ON DELETE CASCADE
 );
 
 CREATE TABLE matches (
-    match_id SERIAL PRIMARY KEY
+    match_id SERIAL PRIMARY KEY,
+    judge_id INTEGER REFERENCES judges ON DELETE SET NULL
 );
 
 CREATE TABLE programs_matches (
