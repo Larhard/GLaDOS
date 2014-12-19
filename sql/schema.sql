@@ -1,3 +1,5 @@
+-- USERS
+
 CREATE SEQUENCE users_id_seq;
 
 CREATE TABLE users (
@@ -33,12 +35,16 @@ CREATE TABLE users_presence (
     time TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
+-- CONTESTS
+
 CREATE TABLE contests (
     contest_id SERIAL PRIMARY KEY,
     name VARCHAR(250),
     description TEXT,
     default_judge INTEGER
 );
+
+-- PROGRAMS
 
 CREATE TABLE programs (
     program_id SERIAL PRIMARY KEY,
@@ -51,6 +57,8 @@ CREATE TABLE programs (
     ties INTEGER NOT NULL DEFAULT 0
 );
 
+-- JUDGES
+
 CREATE TABLE judges (
     judge_id SERIAL PRIMARY KEY,
     path VARCHAR(250) NOT NULL,
@@ -61,10 +69,14 @@ ALTER TABLE contests
     ADD CONSTRAINT default_judge_fkey
     FOREIGN KEY (default_judge) REFERENCES judges ON DELETE SET NULL;
 
+-- MATCHES
+
 CREATE TABLE matches (
     match_id SERIAL PRIMARY KEY,
     judge_id INTEGER REFERENCES judges ON DELETE SET NULL
 );
+
+-- PROGRAMS_MATCHES
 
 CREATE TABLE programs_matches (
     match_id INTEGER NOT NULL REFERENCES matches ON DELETE CASCADE,
@@ -72,6 +84,8 @@ CREATE TABLE programs_matches (
     program_id INTEGER REFERENCES programs ON DELETE SET NULL,
     result VARCHAR(250)
 );
+
+-- MATCH_LOGS
 
 CREATE TABLE match_logs (
     log_id SERIAL PRIMARY KEY,
