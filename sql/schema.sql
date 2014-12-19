@@ -1,3 +1,5 @@
+CREATE SEQUENCE users_id_seq;
+
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
     login VARCHAR(250) NOT NULL UNIQUE,
@@ -7,6 +9,18 @@ CREATE TABLE users (
     password VARCHAR(250)
     CHECK (email ~* '[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)+[A-Z]{2,4}')
 );
+
+CREATE FUNCTION users_id_seq_fun()
+    RETURNS TRIGGER AS $BODY$
+    BEGIN
+        NEW.user_id = NEXTVAL('users_id_seq');
+        RETURN NEW;
+    END;
+    $BODY$ LANGUAGE plpgsql;
+
+CREATE TRIGGER users_id_seq_tgr
+    BEFORE INSERT ON users
+    FOR EACH ROW EXECUTE PROCEDURE users_id_seq_fun();
 
 CREATE TABLE users_presence (
     user_id INTEGER REFERENCES users ON DELETE CASCADE NOT NULL ,
