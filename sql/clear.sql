@@ -45,3 +45,4 @@ DROP FUNCTION IF EXISTS match_logs_id_seq_fun() CASCADE;
 DROP SEQUENCE IF EXISTS match_logs_id_seq CASCADE;
 DROP TABLE IF EXISTS match_logs CASCADE;
 
+

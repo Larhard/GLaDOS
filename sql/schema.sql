@@ -169,6 +169,7 @@ CREATE TABLE programs_matches (
     result VARCHAR(250)
 );
 
+<<<<<<< HEAD
 CREATE SEQUENCE programs_matches_id_seq;
 
 CREATE FUNCTION programs_matches_id_seq_fun()
@@ -189,6 +190,29 @@ CREATE TRIGGER programs_matches_id_seq_tgr
     BEFORE INSERT OR UPDATE ON programs_matches
     FOR EACH ROW EXECUTE PROCEDURE programs_matches_id_seq_fun();
 
+||||||| merged common ancestors
+CREATE SEQUENCE programs_matches_id_seq;
+
+CREATE FUNCTION programs_matches_id_seq_fun()
+    RETURNS TRIGGER AS $BODY$
+    BEGIN
+        IF TG_OP = 'UPDATE' THEN
+            IF NEW.match_id != OLD.match_id THEN
+                RAISE EXCEPTION 'update of programs.program_id';
+            END IF;
+        ELSIF TG_OP = 'INSERT' THEN
+            NEW.match_id = NEXTVAL('programs_id_seq');
+        END IF;
+        RETURN NEW;
+    END;
+    $BODY$ LANGUAGE plpgsql;
+
+CREATE TRIGGER programs_matches_id_seq_tgr
+    BEFORE INSERT OR UPDATE ON programs_matches
+    FOR EACH ROW EXECUTE PROCEDURE programs_matches_id_seq_fun();
+
+=======
+>>>>>>> 8b40a3d7ee06f57dfbdcbb0385bb21ef3d93f26e
 -- MATCH_LOGS
 
 CREATE TABLE match_logs (
