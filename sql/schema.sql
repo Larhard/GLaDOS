@@ -13,13 +13,19 @@ CREATE TABLE users (
 CREATE FUNCTION users_id_seq_fun()
     RETURNS TRIGGER AS $BODY$
     BEGIN
-        NEW.user_id = NEXTVAL('users_id_seq');
+        IF TG_OP = 'UPDATE' THEN
+            IF NEW.user_id != OLD.user_id THEN
+                RAISE EXCEPTION 'update of users.user_id';
+            END IF;
+        ELSIF TG_OP = 'INSERT' THEN
+            NEW.user_id = NEXTVAL('users_id_seq');
+        END IF;
         RETURN NEW;
     END;
     $BODY$ LANGUAGE plpgsql;
 
 CREATE TRIGGER users_id_seq_tgr
-    BEFORE INSERT ON users
+    BEFORE INSERT OR UPDATE ON users
     FOR EACH ROW EXECUTE PROCEDURE users_id_seq_fun();
 
 CREATE TABLE users_presence (
