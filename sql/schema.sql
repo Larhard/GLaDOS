@@ -80,7 +80,7 @@ CREATE TABLE programs (
     ties INTEGER NOT NULL DEFAULT 0
 );
 
-CREATE SEQUENCE program_id_seq;
+CREATE SEQUENCE programs_id_seq;
 
 CREATE FUNCTION programs_id_seq_fun()
     RETURNS TRIGGER AS $BODY$
