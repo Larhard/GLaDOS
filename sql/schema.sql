@@ -41,7 +41,10 @@ CREATE TABLE contests (
     contest_id SERIAL PRIMARY KEY,
     name VARCHAR(250),
     description TEXT,
+    contest_start TIMESTAMP NOT NULL DEFAULT NOW(),
+    contest_end TIMESTAMP,
     default_judge INTEGER
+    CHECK (contest_start < contest_end)
 );
 
 CREATE SEQUENCE contests_id_seq;
@@ -77,7 +80,7 @@ CREATE TABLE programs (
     ties INTEGER NOT NULL DEFAULT 0
 );
 
-CREATE SEQUENCE program_id_seq;
+CREATE SEQUENCE programs_id_seq;
 
 CREATE FUNCTION programs_id_seq_fun()
     RETURNS TRIGGER AS $BODY$
@@ -112,10 +115,10 @@ CREATE FUNCTION judges_id_seq_fun()
     BEGIN
         IF TG_OP = 'UPDATE' THEN
             IF NEW.judge_id != OLD.judge_id THEN
-                RAISE EXCEPTION 'update of programs.program_id';
+                RAISE EXCEPTION 'update of judges.judge_id';
             END IF;
         ELSIF TG_OP = 'INSERT' THEN
-            NEW.judge_id = NEXTVAL('programs_id_seq');
+            NEW.judge_id = NEXTVAL('judges_id_seq');
         END IF;
         RETURN NEW;
     END;
@@ -144,10 +147,10 @@ CREATE FUNCTION matches_id_seq_fun()
     BEGIN
         IF TG_OP = 'UPDATE' THEN
             IF NEW.match_id != OLD.match_id THEN
-                RAISE EXCEPTION 'update of programs.program_id';
+                RAISE EXCEPTION 'update of matches.match_id';
             END IF;
         ELSIF TG_OP = 'INSERT' THEN
-            NEW.match_id = NEXTVAL('programs_id_seq');
+            NEW.match_id = NEXTVAL('matches_id_seq');
         END IF;
         RETURN NEW;
     END;
@@ -173,10 +176,10 @@ CREATE FUNCTION programs_matches_id_seq_fun()
     BEGIN
         IF TG_OP = 'UPDATE' THEN
             IF NEW.match_id != OLD.match_id THEN
-                RAISE EXCEPTION 'update of programs.program_id';
+                RAISE EXCEPTION 'update of programs_matches.program_id';
             END IF;
         ELSIF TG_OP = 'INSERT' THEN
-            NEW.match_id = NEXTVAL('programs_id_seq');
+            NEW.match_id = NEXTVAL('programs_matches_id_seq');
         END IF;
         RETURN NEW;
     END;
@@ -196,19 +199,6 @@ CREATE TABLE match_logs (
     priority INTEGER NOT NULL
 );
 
-<<<<<<< HEAD
-CREATE SEQUENCE match_logs_id_seq;
-
-CREATE FUNCTION match_logs_id_seq_fun()
-    RETURNS TRIGGER AS $BODY$
-    BEGIN
-        IF TG_OP = 'UPDATE' THEN
-            IF NEW.log_id != OLD.log_id THEN
-                RAISE EXCEPTION 'update of programs.program_id';
-            END IF;
-        ELSIF TG_OP = 'INSERT' THEN
-            NEW.log_id = NEXTVAL('programs_id_seq');
-=======
 CREATE FUNCTION match_logs_time_check()
     RETURNS trigger AS $BODY$
     BEGIN
@@ -221,13 +211,30 @@ CREATE FUNCTION match_logs_time_check()
                 FROM matches
                 WHERE matches.match_id = NEW.match_id
             );
->>>>>>> dc2c95e70959c3fdb0371ad549ab2abcd43a6ff5
         END IF;
         RETURN NEW;
     END;
     $BODY$ LANGUAGE plpgsql;
 
-<<<<<<< HEAD
+CREATE TRIGGER match_logs_time_tgr BEFORE INSERT OR UPDATE ON match_logs
+    FOR EACH ROW EXECUTE PROCEDURE match_logs_time_check();
+
+CREATE SEQUENCE match_logs_id_seq;
+
+CREATE FUNCTION match_logs_id_seq_fun()
+    RETURNS TRIGGER AS $BODY$
+    BEGIN
+        IF TG_OP = 'UPDATE' THEN
+            IF NEW.log_id != OLD.log_id THEN
+                RAISE EXCEPTION 'update of match_logs.log_id';
+            END IF;
+        ELSIF TG_OP = 'INSERT' THEN
+            NEW.log_id = NEXTVAL('match_logs_id_seq');
+        END IF;
+        RETURN NEW;
+    END;
+    $BODY$ LANGUAGE plpgsql;
+
 CREATE TRIGGER match_logs_id_seq_tgr
     BEFORE INSERT OR UPDATE ON match_logs
     FOR EACH ROW EXECUTE PROCEDURE match_logs_id_seq_fun();
@@ -235,7 +242,3 @@ CREATE TRIGGER match_logs_id_seq_tgr
 
 
 
-=======
-CREATE TRIGGER match_logs_time_tgr BEFORE INSERT OR UPDATE ON match_logs
-    FOR EACH ROW EXECUTE PROCEDURE match_logs_time_check();
->>>>>>> dc2c95e70959c3fdb0371ad549ab2abcd43a6ff5
