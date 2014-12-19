@@ -133,7 +133,8 @@ ALTER TABLE contests
 
 CREATE TABLE matches (
     match_id SERIAL PRIMARY KEY,
-    judge_id INTEGER REFERENCES judges ON DELETE SET NULL
+    judge_id INTEGER REFERENCES judges ON DELETE SET NULL,
+    start_time TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE SEQUENCE matches_id_seq;
@@ -195,6 +196,7 @@ CREATE TABLE match_logs (
     priority INTEGER NOT NULL
 );
 
+<<<<<<< HEAD
 CREATE SEQUENCE match_logs_id_seq;
 
 CREATE FUNCTION match_logs_id_seq_fun()
@@ -206,11 +208,26 @@ CREATE FUNCTION match_logs_id_seq_fun()
             END IF;
         ELSIF TG_OP = 'INSERT' THEN
             NEW.log_id = NEXTVAL('programs_id_seq');
+=======
+CREATE FUNCTION match_logs_time_check()
+    RETURNS trigger AS $BODY$
+    BEGIN
+        IF NEW.time < (SELECT matches.start_time
+                FROM matches
+                WHERE matches.match_id = NEW.match_id
+            )
+        THEN RAISE EXCEPTION 'match_logs.time before matches.start_time (% < %)',
+            NEW.time, (SELECT matches.start_time
+                FROM matches
+                WHERE matches.match_id = NEW.match_id
+            );
+>>>>>>> dc2c95e70959c3fdb0371ad549ab2abcd43a6ff5
         END IF;
         RETURN NEW;
     END;
     $BODY$ LANGUAGE plpgsql;
 
+<<<<<<< HEAD
 CREATE TRIGGER match_logs_id_seq_tgr
     BEFORE INSERT OR UPDATE ON match_logs
     FOR EACH ROW EXECUTE PROCEDURE match_logs_id_seq_fun();
@@ -218,3 +235,7 @@ CREATE TRIGGER match_logs_id_seq_tgr
 
 
 
+=======
+CREATE TRIGGER match_logs_time_tgr BEFORE INSERT OR UPDATE ON match_logs
+    FOR EACH ROW EXECUTE PROCEDURE match_logs_time_check();
+>>>>>>> dc2c95e70959c3fdb0371ad549ab2abcd43a6ff5
