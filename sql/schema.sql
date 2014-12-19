@@ -73,7 +73,8 @@ ALTER TABLE contests
 
 CREATE TABLE matches (
     match_id SERIAL PRIMARY KEY,
-    judge_id INTEGER REFERENCES judges ON DELETE SET NULL
+    judge_id INTEGER REFERENCES judges ON DELETE SET NULL,
+    start_time TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- PROGRAMS_MATCHES
@@ -94,3 +95,23 @@ CREATE TABLE match_logs (
     body TEXT NOT NULL,
     priority INTEGER NOT NULL
 );
+
+CREATE FUNCTION match_logs_time_check()
+    RETURNS trigger AS $BODY$
+    BEGIN
+        IF NEW.time < (SELECT matches.start_time
+                FROM matches
+                WHERE matches.match_id = NEW.match_id
+            )
+        THEN RAISE EXCEPTION 'match_logs.time before matches.start_time (% < %)',
+            NEW.time, (SELECT matches.start_time
+                FROM matches
+                WHERE matches.match_id = NEW.match_id
+            );
+        END IF;
+        RETURN NEW;
+    END;
+    $BODY$ LANGUAGE plpgsql;
+
+CREATE TRIGGER match_logs_time_tgr BEFORE INSERT OR UPDATE ON match_logs
+    FOR EACH ROW EXECUTE PROCEDURE match_logs_time_check();

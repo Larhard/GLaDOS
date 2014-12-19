@@ -3,6 +3,8 @@ DROP TABLE IF EXISTS programs_matches CASCADE;
 DROP TABLE IF EXISTS programs CASCADE;
 DROP TRIGGER users_id_seq_tgr ON users CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
+DROP TRIGGER match_logs_time_tgr ON match_logs CASCADE;
+DROP FUNCTION match_logs_time_check() CASCADE;
 DROP TABLE IF EXISTS match_logs CASCADE;
 ALTER TABLE contests DROP CONSTRAINT default_judge_fkey;
 DROP TABLE IF EXISTS matches CASCADE;
@@ -11,3 +13,4 @@ DROP TABLE IF EXISTS contests CASCADE;
 DROP TABLE IF EXISTS judges CASCADE;
 DROP FUNCTION users_id_seq_fun() CASCADE;
 DROP SEQUENCE users_id_seq CASCADE;
+
