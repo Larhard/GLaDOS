@@ -44,6 +44,26 @@ CREATE TABLE contests (
     default_judge INTEGER
 );
 
+CREATE SEQUENCE contests_id_seq;
+
+CREATE FUNCTION contests_id_seq_fun()
+    RETURNS TRIGGER AS $BODY$
+    BEGIN
+        IF TG_OP = 'UPDATE' THEN
+            IF NEW.contest_id != OLD.contest_id THEN
+                RAISE EXCEPTION 'update of contests.contest_id';
+            END IF;
+        ELSIF TG_OP = 'INSERT' THEN
+            NEW.contest_id = NEXTVAL('contests_id_seq');
+        END IF;
+        RETURN NEW;
+    END;
+    $BODY$ LANGUAGE plpgsql;
+
+CREATE TRIGGER contests_id_seq_tgr
+    BEFORE INSERT OR UPDATE ON contests
+    FOR EACH ROW EXECUTE PROCEDURE contests_id_seq_fun();
+
 -- PROGRAMS
 
 CREATE TABLE programs (
@@ -57,6 +77,26 @@ CREATE TABLE programs (
     ties INTEGER NOT NULL DEFAULT 0
 );
 
+CREATE SEQUENCE program_id_seq;
+
+CREATE FUNCTION programs_id_seq_fun()
+    RETURNS TRIGGER AS $BODY$
+    BEGIN
+        IF TG_OP = 'UPDATE' THEN
+            IF NEW.program_id != OLD.program_id THEN
+                RAISE EXCEPTION 'update of programs.program_id';
+            END IF;
+        ELSIF TG_OP = 'INSERT' THEN
+            NEW.program_id = NEXTVAL('programs_id_seq');
+        END IF;
+        RETURN NEW;
+    END;
+    $BODY$ LANGUAGE plpgsql;
+
+CREATE TRIGGER programs_id_seq_tgr
+    BEFORE INSERT OR UPDATE ON programs
+    FOR EACH ROW EXECUTE PROCEDURE programs_id_seq_fun();
+
 -- JUDGES
 
 CREATE TABLE judges (
@@ -64,6 +104,26 @@ CREATE TABLE judges (
     path VARCHAR(250) NOT NULL,
     contest_id INTEGER NOT NULL REFERENCES contests ON DELETE CASCADE
 );
+
+CREATE SEQUENCE judges_id_seq;
+
+CREATE FUNCTION judges_id_seq_fun()
+    RETURNS TRIGGER AS $BODY$
+    BEGIN
+        IF TG_OP = 'UPDATE' THEN
+            IF NEW.judge_id != OLD.judge_id THEN
+                RAISE EXCEPTION 'update of programs.program_id';
+            END IF;
+        ELSIF TG_OP = 'INSERT' THEN
+            NEW.judge_id = NEXTVAL('programs_id_seq');
+        END IF;
+        RETURN NEW;
+    END;
+    $BODY$ LANGUAGE plpgsql;
+
+CREATE TRIGGER judges_id_seq_tgr
+    BEFORE INSERT OR UPDATE ON judges
+    FOR EACH ROW EXECUTE PROCEDURE judges_id_seq_fun();
 
 ALTER TABLE contests
     ADD CONSTRAINT default_judge_fkey
@@ -76,6 +136,26 @@ CREATE TABLE matches (
     judge_id INTEGER REFERENCES judges ON DELETE SET NULL
 );
 
+CREATE SEQUENCE matches_id_seq;
+
+CREATE FUNCTION matches_id_seq_fun()
+    RETURNS TRIGGER AS $BODY$
+    BEGIN
+        IF TG_OP = 'UPDATE' THEN
+            IF NEW.match_id != OLD.match_id THEN
+                RAISE EXCEPTION 'update of programs.program_id';
+            END IF;
+        ELSIF TG_OP = 'INSERT' THEN
+            NEW.match_id = NEXTVAL('programs_id_seq');
+        END IF;
+        RETURN NEW;
+    END;
+    $BODY$ LANGUAGE plpgsql;
+
+CREATE TRIGGER matches_id_seq_tgr
+    BEFORE INSERT OR UPDATE ON matches
+    FOR EACH ROW EXECUTE PROCEDURE matches_id_seq_fun();
+
 -- PROGRAMS_MATCHES
 
 CREATE TABLE programs_matches (
@@ -84,6 +164,26 @@ CREATE TABLE programs_matches (
     program_id INTEGER REFERENCES programs ON DELETE SET NULL,
     result VARCHAR(250)
 );
+
+CREATE SEQUENCE programs_matches_id_seq;
+
+CREATE FUNCTION programs_matches_id_seq_fun()
+    RETURNS TRIGGER AS $BODY$
+    BEGIN
+        IF TG_OP = 'UPDATE' THEN
+            IF NEW.match_id != OLD.match_id THEN
+                RAISE EXCEPTION 'update of programs.program_id';
+            END IF;
+        ELSIF TG_OP = 'INSERT' THEN
+            NEW.match_id = NEXTVAL('programs_id_seq');
+        END IF;
+        RETURN NEW;
+    END;
+    $BODY$ LANGUAGE plpgsql;
+
+CREATE TRIGGER programs_matches_id_seq_tgr
+    BEFORE INSERT OR UPDATE ON programs_matches
+    FOR EACH ROW EXECUTE PROCEDURE programs_matches_id_seq_fun();
 
 -- MATCH_LOGS
 
@@ -94,3 +194,27 @@ CREATE TABLE match_logs (
     body TEXT NOT NULL,
     priority INTEGER NOT NULL
 );
+
+CREATE SEQUENCE match_logs_id_seq;
+
+CREATE FUNCTION match_logs_id_seq_fun()
+    RETURNS TRIGGER AS $BODY$
+    BEGIN
+        IF TG_OP = 'UPDATE' THEN
+            IF NEW.log_id != OLD.log_id THEN
+                RAISE EXCEPTION 'update of programs.program_id';
+            END IF;
+        ELSIF TG_OP = 'INSERT' THEN
+            NEW.log_id = NEXTVAL('programs_id_seq');
+        END IF;
+        RETURN NEW;
+    END;
+    $BODY$ LANGUAGE plpgsql;
+
+CREATE TRIGGER match_logs_id_seq_tgr
+    BEFORE INSERT OR UPDATE ON match_logs
+    FOR EACH ROW EXECUTE PROCEDURE match_logs_id_seq_fun();
+
+
+
+
