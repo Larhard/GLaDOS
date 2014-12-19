@@ -47,20 +47,21 @@ COPY judges (judge_id, path, contest_id) FROM stdin;
 10	http://xxto.locali/epzgj/fjdu.bmp	8
 \.
 
-
 COPY matches (judge_id) FROM stdin;
-\N
-\N
+1
+2
 1
 2
 1
 7
 3
 9
-\N
 1
 \.
 
+COPY matches (judge_id, start_time) FROM stdin;
+1	2015-09-24 13:02:02.368
+\.
 
 COPY programs (user_id, contest_id, name, submission_time, winns, defeats, ties) FROM stdin;
 4	\N	Stephen Cisneros	2008-09-24 10:40:23.168	1568779461	1569356619	1569164244

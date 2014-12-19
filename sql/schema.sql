@@ -136,7 +136,7 @@ ALTER TABLE contests
 
 CREATE TABLE matches (
     match_id SERIAL PRIMARY KEY,
-    judge_id INTEGER REFERENCES judges ON DELETE SET NULL,
+    judge_id INTEGER NOT NULL REFERENCES judges ON DELETE CASCADE,
     start_time TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
@@ -159,6 +159,30 @@ CREATE FUNCTION matches_id_seq_fun()
 CREATE TRIGGER matches_id_seq_tgr
     BEFORE INSERT OR UPDATE ON matches
     FOR EACH ROW EXECUTE PROCEDURE matches_id_seq_fun();
+
+CREATE FUNCTION matches_start_time_check()
+    RETURNS TRIGGER AS $BODY$
+    DECLARE
+        contest RECORD;
+    BEGIN
+            SELECT contests.contest_start, contests.contest_end
+                INTO contest
+                FROM contests
+                    JOIN judges
+                        ON (judges.contest_id = contests.contest_id)
+                WHERE judges.judge_id = NEW.judge_id
+        ;
+        IF NEW.start_time NOT BETWEEN contest.contest_start AND contest.contest_end THEN
+            RAISE EXCEPTION 'matches.start_time not in contest time range (% NOT BETWEEN % AND %)',
+                NEW.start_time, contest.contest_start, contest.contest_end;
+        END IF;
+        RETURN NEW;
+    END;
+    $BODY$ LANGUAGE plpgsql;
+
+CREATE TRIGGER match_logs_time_check_tgr
+    BEFORE INSERT OR UPDATE ON matches
+    FOR EACH ROW EXECUTE PROCEDURE matches_start_time_check();
 
 -- PROGRAMS_MATCHES
 
