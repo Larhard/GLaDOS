@@ -41,7 +41,10 @@ CREATE TABLE contests (
     contest_id SERIAL PRIMARY KEY,
     name VARCHAR(250),
     description TEXT,
+    contest_start TIMESTAMP NOT NULL,
+    contest_end TIMESTAMP,
     default_judge INTEGER
+    CHECK (contest_start < contest_end)
 );
 
 -- PROGRAMS
