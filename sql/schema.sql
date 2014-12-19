@@ -1,7 +1,5 @@
 -- USERS
 
-CREATE SEQUENCE users_id_seq;
-
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
     login VARCHAR(250) NOT NULL UNIQUE,
@@ -11,6 +9,8 @@ CREATE TABLE users (
     password VARCHAR(250)
     CHECK (email ~* '[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)+[A-Z]{2,4}')
 );
+
+CREATE SEQUENCE users_id_seq;
 
 CREATE FUNCTION users_id_seq_fun()
     RETURNS TRIGGER AS $BODY$
