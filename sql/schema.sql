@@ -115,10 +115,10 @@ CREATE FUNCTION judges_id_seq_fun()
     BEGIN
         IF TG_OP = 'UPDATE' THEN
             IF NEW.judge_id != OLD.judge_id THEN
-                RAISE EXCEPTION 'update of programs.program_id';
+                RAISE EXCEPTION 'update of judges.judge_id';
             END IF;
         ELSIF TG_OP = 'INSERT' THEN
-            NEW.judge_id = NEXTVAL('programs_id_seq');
+            NEW.judge_id = NEXTVAL('judges_id_seq');
         END IF;
         RETURN NEW;
     END;
@@ -147,10 +147,10 @@ CREATE FUNCTION matches_id_seq_fun()
     BEGIN
         IF TG_OP = 'UPDATE' THEN
             IF NEW.match_id != OLD.match_id THEN
-                RAISE EXCEPTION 'update of programs.program_id';
+                RAISE EXCEPTION 'update of matches.match_id';
             END IF;
         ELSIF TG_OP = 'INSERT' THEN
-            NEW.match_id = NEXTVAL('programs_id_seq');
+            NEW.match_id = NEXTVAL('matches_id_seq');
         END IF;
         RETURN NEW;
     END;
@@ -206,10 +206,10 @@ CREATE FUNCTION match_logs_id_seq_fun()
     BEGIN
         IF TG_OP = 'UPDATE' THEN
             IF NEW.log_id != OLD.log_id THEN
-                RAISE EXCEPTION 'update of programs.program_id';
+                RAISE EXCEPTION 'update of match_logs.log_id';
             END IF;
         ELSIF TG_OP = 'INSERT' THEN
-            NEW.log_id = NEXTVAL('programs_id_seq');
+            NEW.log_id = NEXTVAL('match_logs_id_seq');
         END IF;
         RETURN NEW;
     END;
