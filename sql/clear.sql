@@ -21,8 +21,6 @@ DROP FUNCTION IF EXISTS judges_id_seq_fun() CASCADE;
 DROP SEQUENCE IF EXISTS judges_id_seq CASCADE;
 DROP FUNCTION IF EXISTS matches_id_seq_fun() CASCADE;
 DROP SEQUENCE IF EXISTS matches_id_seq CASCADE;
-DROP FUNCTION IF EXISTS programs_matches_id_seq_fun() CASCADE;
-DROP SEQUENCE IF EXISTS programs_matches_id_seq CASCADE;
 DROP FUNCTION IF EXISTS match_logs_id_seq_fun() CASCADE;
 DROP SEQUENCE IF EXISTS match_logs_id_seq CASCADE;
 
