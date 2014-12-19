@@ -1,11 +1,13 @@
--- DROP TABLE IF EXISTS users_presence CASCADE;
 -- DROP TABLE IF EXISTS programs_matches CASCADE;
--- DROP TRIGGER match_logs_time_tgr ON match_logs CASCADE;
--- DROP FUNCTION match_logs_time_check() CASCADE;
 -- DROP TABLE IF EXISTS match_logs CASCADE;
 -- ALTER TABLE contests DROP CONSTRAINT default_judge_fkey;
 -- DROP TABLE IF EXISTS matches CASCADE;
 -- ALTER TABLE judges DROP CONSTRAINT judges_contest_id_fkey;
+
+
+DROP TABLE IF EXISTS users_presence CASCADE;
+DROP TRIGGER match_logs_time_tgr ON match_logs CASCADE;
+DROP FUNCTION match_logs_time_check() CASCADE;
 
 DROP TRIGGER IF EXISTS users_id_seq_tgr ON users CASCADE;
 DROP TRIGGER IF EXISTS contests_id_seq_tgr ON contests CASCADE;
