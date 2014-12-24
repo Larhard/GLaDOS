@@ -1,3 +1,59 @@
+# Gra testowa: Zgadywanie liczby
+
+Każdy gracz wybiera liczbę. Judge pyta graczy, kto co wybrał.
+Na odpowiedź, judge zwraca informację: wyżej, niżej, zgadnięte.
+
+Wynik: GUESS_LIMIT - ilość prób
+
+
+# Judge: obsługuje grę
+
+## Protokół komunikacyjny:
+
+## Wiadomość:
+
+<nr adresata/nadawcy>\t<treść wiadomości>\n
+
+## Adresaci:
+
+<numer gracza> - konkretny gracz
+0 - wszyscy gracze
+-1 - zarządzanie grą
+-2 - logi gry
+
+### EXAMPLE:
+
+    <<< -1  players 2
+    <<< -1  GUESS_LIMIT 5
+    <<< -1  MAX_NUMBER 10
+    <<< -1  start
+    >>> -2  game started
+    >>> 0   10      # MAX_NUMBER
+    <<< 1   4       # number to guess
+    <<< 2   6       # number to guess
+    <<< 2   5       # guessed number
+    >>> 2   lower   # 2: 1/5
+    <<< 1   0
+    >>> 1   greater # 1: 1/5
+    <<< 1   1
+    >>> 1   greater # 1: 2/5
+    <<< 1   2
+    >>> 1   greater # 1: 3/5
+    <<< 1   3
+    >>> 1   greater # 1: 4/5
+    <<< 1   4
+    >>> 1   end     # 1: 5/5
+    >>> -2  player 1 score: 0
+    <<< 2   2
+    >>> 2   greater # 2: 2/5
+    <<< 2   4
+    >>> 2   end     # 2: 3/5
+    >>> -2  player 2 score: 3
+    >>> -1  score 1 0
+    >>> -1  score 2 3
+    >>> -1  end
+
+
 # Wirtualne Środowisko Pythona
 
     $ virtualenv -p python2 django_env
