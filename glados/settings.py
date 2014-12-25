@@ -65,6 +65,14 @@ DATABASES = {
     }
 }
 
+# use dj_database_url as default default
+try:
+    # noinspection PyUnresolvedReferences
+    import dj_database_url
+    DATABASES['default'] = dj_database_url.config()
+except ImportError:
+    pass
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
