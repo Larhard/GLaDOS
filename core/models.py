@@ -42,5 +42,5 @@ class Program(models.Model):
 class ProgramMatch(models.Model):
     match = models.ForeignKey(Match)
     program = models.ForeignKey(Program)
-    score = models.IntegerField(default=0)
+    score = models.IntegerField(default=0, null=True, blank=True)
     comment = models.TextField(null=True, blank=True)

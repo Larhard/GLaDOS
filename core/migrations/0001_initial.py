@@ -82,7 +82,7 @@ class Migration(migrations.Migration):
             name='ProgramMatch',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('score', models.IntegerField(default=0)),
+                ('score', models.IntegerField(default=0, null=True, blank=True)),
                 ('comment', models.TextField(null=True, blank=True)),
                 ('match', models.ForeignKey(to='core.Match')),
                 ('program', models.ForeignKey(to='core.Program')),
