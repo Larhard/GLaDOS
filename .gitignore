@@ -5,6 +5,10 @@
 __pycache__/
 local_settings.py
 
+# static files
+static/
+media/
+
 ## Virtual environment
 django_env/
 
