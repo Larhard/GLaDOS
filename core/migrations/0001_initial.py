@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import datetime
+import django.utils.timezone
 from django.conf import settings
 
 
@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=256)),
                 ('description', models.TextField(null=True, blank=True)),
-                ('start', models.DateTimeField(default=datetime.datetime.now)),
+                ('start', models.DateTimeField(default=django.utils.timezone.now)),
                 ('end', models.DateTimeField(null=True, blank=True)),
             ],
             options={
@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
             name='Match',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('start', models.DateTimeField(default=datetime.datetime.now)),
+                ('start', models.DateTimeField(default=django.utils.timezone.now)),
                 ('contest', models.ForeignKey(to='core.Contest')),
                 ('judge', models.ForeignKey(to='core.Judge')),
             ],
@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
             name='MatchLog',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('time', models.DateTimeField(default=datetime.datetime.now)),
+                ('time', models.DateTimeField(default=django.utils.timezone.now)),
                 ('body', models.TextField()),
                 ('priority', models.IntegerField(default=0)),
                 ('match', models.ForeignKey(to='core.Match')),
@@ -67,7 +67,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=256)),
-                ('application_time', models.DateTimeField(default=datetime.datetime.now)),
+                ('application_time', models.DateTimeField(default=django.utils.timezone.now)),
                 ('wins', models.IntegerField(default=0)),
                 ('defeats', models.IntegerField(default=0)),
                 ('ties', models.IntegerField(default=0)),
