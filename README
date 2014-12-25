@@ -1,3 +1,18 @@
+# Launching Glados
+
+Initialize database
+
+    $ ./manage.py syncdb
+
+Run debug server **do not use in release**
+
+    $ ./manage.py runserver
+
+In release use fcgi
+
+    $ ./manage.py collectstatic
+    $ ./manage.py runfcgi
+
 # Gra testowa: Zgadywanie liczby
 
 Każdy gracz wybiera liczbę. Judge pyta graczy, kto co wybrał.
