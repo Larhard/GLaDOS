@@ -18,6 +18,7 @@ class Judge(models.Model):
 
 class Match(models.Model):
     judge = models.ForeignKey(Judge)
+    contest = models.ForeignKey(Contest)
     start = models.DateTimeField(default=datetime.now)
 
 

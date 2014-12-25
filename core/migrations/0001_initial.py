@@ -42,6 +42,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('start', models.DateTimeField(default=datetime.datetime.now)),
+                ('contest', models.ForeignKey(to='core.Contest')),
                 ('judge', models.ForeignKey(to='core.Judge')),
             ],
             options={

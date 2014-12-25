@@ -22,6 +22,7 @@ class JudgeAdmin(admin.ModelAdmin):
 class MatchAdmin(admin.ModelAdmin):
     fields = [
         'judge',
+        'start',
         'contest',
     ]
 
