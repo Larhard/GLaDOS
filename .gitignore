@@ -124,3 +124,7 @@ Session.vim
 
 ### Automatic CTags ###
 .atags
+
+
+### SQlite ###
+*.sqlite3
