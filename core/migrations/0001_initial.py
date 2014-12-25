@@ -18,9 +18,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=256)),
-                ('description', models.TextField()),
+                ('description', models.TextField(null=True, blank=True)),
                 ('start', models.DateTimeField(default=datetime.datetime.now)),
-                ('end', models.DateTimeField()),
+                ('end', models.DateTimeField(null=True, blank=True)),
             ],
             options={
             },
@@ -77,10 +77,23 @@ class Migration(migrations.Migration):
             },
             bases=(models.Model,),
         ),
+        migrations.CreateModel(
+            name='ProgramMatch',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('score', models.IntegerField(default=0)),
+                ('comment', models.TextField(null=True, blank=True)),
+                ('match', models.ForeignKey(to='core.Match')),
+                ('program', models.ForeignKey(to='core.Program')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
         migrations.AddField(
             model_name='contest',
             name='default_judge',
-            field=models.ForeignKey(related_name='default_judge', to='core.Judge'),
+            field=models.ForeignKey(related_name='default_judge', blank=True, to='core.Judge', null=True),
             preserve_default=True,
         ),
     ]
