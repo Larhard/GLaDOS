@@ -51,6 +51,9 @@ class ProgramAdmin(admin.ModelAdmin):
 class ProgramMatchAdmin(admin.ModelAdmin):
     fields = [
         'match',
+        'program',
+        'score',
+        'comment',
     ]
 
 
