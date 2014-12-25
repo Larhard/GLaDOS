@@ -38,7 +38,7 @@ class Program(models.Model):
     ties = models.IntegerField(null=False, default=0)
 
 
-class ProgramMatch(models.ManyToManyRel):
+class ProgramMatch(models.Model):
     match = models.ForeignKey(Match, null=False)
     program = models.ForeignKey(Program, null=False)
     score = models.IntegerField(null=False, default=0)
