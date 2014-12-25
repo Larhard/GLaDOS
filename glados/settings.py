@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'glados_auth',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -98,6 +99,10 @@ STATICFILES_DIRS = ()
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Custom authentitacion model
+
+AUTH_USER_MODEL = 'glados_auth.GladosUser'
 
 # Load local settings from local_settings.py
 try:
