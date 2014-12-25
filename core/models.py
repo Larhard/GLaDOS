@@ -60,5 +60,8 @@ class ProgramMatch(models.Model):
     score = models.IntegerField(null=True, blank=True)
     comment = models.TextField(null=True, blank=True)
 
+    class Meta:
+        unique_together = ('match', 'program')
+
     def __unicode__(self):
         return "{} {}".format(self.match_id, self.program_id)
