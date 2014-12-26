@@ -38,8 +38,10 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'glados_auth',
     'core',
+    'glados_auth',
+    'judge_server',
+    'web',
 )
 
 MIDDLEWARE_CLASSES = (
