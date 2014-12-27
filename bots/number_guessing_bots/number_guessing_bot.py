@@ -18,10 +18,10 @@ class Bot:
         self.last_guess = 0
 
     def give_random(self):
-        print random.randint(self.total_min, self.total_max)
+        print random.randint(self.total_min, self.total_max + 1)
 
     def make_guess(self):
-        self.last_guess = random.randint(self.current_min, self.current_max)
+        self.last_guess = random.randint(self.current_min, self.current_max + 1)
         print self.last_guess
         
     def get_feedback(self):
