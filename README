@@ -16,7 +16,7 @@ In release use fcgi
 # Gra testowa: Zgadywanie liczby
 
 Każdy gracz wybiera liczbę. Judge pyta graczy, kto co wybrał.
-Na odpowiedź, judge zwraca informację: wyżej, niżej, zgadnięte.
+Na odpowiedź, judge zwraca informację: wyżej (greater), niżej (lower), zgadnięte.
 
 Wynik: GUESS_LIMIT - ilość prób
 
