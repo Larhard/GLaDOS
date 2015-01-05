@@ -1,3 +1,4 @@
+from judge_server.match_manager import SimpleMatchDB
 import re
 
 
@@ -14,13 +15,18 @@ class ParserBase:
 
 
 class SimpleContestParser(ParserBase):
+    match_db = SimpleMatchDB()
+
     def __init__(self, client, contest_id, user_id):
         ParserBase.__init__(self, client)
         self.contest_id = contest_id
         self.user_id = user_id
+        self.match_session = self.match_db.get_match_session(self.contest_id,
+                                             self.user_id,
+                                             self.client.conn)
 
     def parse(self, what):
-        print "send {} to judge".format(what)
+        self.match_session.send(what)
 
 
 class SimplePlayerParser(ParserBase):
