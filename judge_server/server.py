@@ -32,7 +32,7 @@ class ClientThread(threading.Thread):
         print "{} [{}] connected".format(*self.addr)
 
         for line in split_socket(self.conn):
-            self.parser = self.parser.parse(line)
+            self.parser = self.parser.parse(line) or self.parser
 
         self.conn.close()
         print "{} [{}] disconnected".format(*self.addr)
