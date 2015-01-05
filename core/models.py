@@ -9,6 +9,7 @@ class Contest(models.Model):
     start = models.DateTimeField(default=timezone.now)
     end = models.DateTimeField(null=True, blank=True)
     default_judge = models.ForeignKey('Judge', related_name='default_judge', null=True, blank=True)
+    players_count = models.IntegerField()
 
     def __unicode__(self):
         return "{} [{}]".format(self.name, self.id)
