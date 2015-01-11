@@ -1,0 +1,25 @@
+{% extends 'manual_judge_server/base.html' %}
+
+{% block title %}
+    {{ block.super }}
+    - Home
+{% endblock %}
+
+{% block content %}
+    Contests:
+    <table>
+        <tr>
+            <th>id</th>
+            <th>Name</th>
+            <th>Description</th>
+        </tr>
+        {% for contest in contests %}
+            <tr>
+                <td>contest.id</td>
+                <td>contest.name</td>
+                <td>contest.description</td>
+                {# TODO make it clickable #}
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'core',
     'glados_auth',
     'web',
+    'manual_judge_server',
 )
 
 MIDDLEWARE_CLASSES = (
