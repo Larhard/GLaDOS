@@ -40,7 +40,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'core',
     'glados_auth',
-    'judge_server',
     'web',
 )
 
