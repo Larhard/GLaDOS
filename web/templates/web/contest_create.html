@@ -1,0 +1,36 @@
+{% extends 'web/base.html' %}
+
+{% block title %}
+    {{ block.super }}
+    - Contest Create
+{% endblock %}
+
+{% block content %}
+    {% if error %}
+        {{ error }}
+    {% endif %}
+    <form action="{{ request.get_full_path }}" method="post">{% csrf_token %}
+        <ul>
+            <li>
+                <label>
+                    Name:
+                    <input type="text" name="contest_name">
+                </label>
+            </li>
+            <li>
+                <label>
+                    Description:<br>
+                    <textarea name="contest_description"></textarea>
+                </label>
+            </li>
+            <li>
+                <label>
+                    Players:<br>
+                    <input type="number" name="contest_players_count" value="1">
+                </label>
+            </li>
+        </ul>
+        <input type="hidden" name="create">
+        <input type="submit" value="Create">
+    </form>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'web/base.html' %}
+
+{% block title %}
+    {{ block.super }}
+    - Contests List
+{% endblock %}
+
+{% block content %}
+    Contests:
+    <table>
+        <tr>
+            <th>id</th>
+            <th>Name</th>
+            <th>Description</th>
+        </tr>
+        {% for contest in contests %}
+            <tr>
+                <td>{{ contest.id }}</td>
+                <td>{{ contest.name }}</td>
+                <td>{{ contest.description }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <a href="{% url 'web:contest_create' %}?r={{ request.get_full_path | urlencode:'' }}">Create</a>
+{% endblock %}
