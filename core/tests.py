@@ -48,11 +48,11 @@ class CoreTest(TestCase):
         pm.program = self.program
         pm.match = self.match
 
-        exception = False
+        exception = None
         try:
             pm.save()
-        except (IntegrityError, ValidationError):
-            exception = True
+        except IntegrityError as e:
+            exception = e
 
         self.assertTrue(exception, "(program match) pair is not unique")
 
@@ -60,11 +60,11 @@ class CoreTest(TestCase):
         self.contest.end = timezone.now()
         self.contest.start = self.contest.end + timezone.timedelta(days=1)
 
-        exception = False
+        exception = None
         try:
             self.contest.save()
-        except (IntegrityError, ValidationError) as e:
-            exception = True
+        except ValidationError as e:
+            exception = e
         
         self.assertTrue(exception, "contest start can't occur after contest end")
 
@@ -72,13 +72,13 @@ class CoreTest(TestCase):
         self.contest.end = timezone.now()
         self.contest.start = self.contest.end - timezone.timedelta(days=1)
 
-        exception = False
+        exception = None
         try:
             self.contest.save()
-        except (IntegrityError, ValidationError):
-            exception = True
+        except ValidationError as e:
+            exception = e
         
-        self.assertFalse(exception, "contest start can occur after contest end")
+        self.assertFalse(exception, "contest start can occur after contest end: {}".format(exception))
 
     def test_no_logs_before_match_start_invalid(self):
         self.match.start = timezone.now()
@@ -87,11 +87,11 @@ class CoreTest(TestCase):
         self.match_log.match = self.match
         self.match_log.time = self.match.start - timezone.timedelta(days=1)
 
-        exception = False
+        exception = None
         try:
             self.match_log.save()
-        except (IntegrityError, ValidationError):
-            exception = True
+        except ValidationError as e:
+            exception = e
         
         self.assertTrue(exception, "log with earlier date than match start")
     
@@ -102,26 +102,26 @@ class CoreTest(TestCase):
         self.match_log.match = self.match
         self.match_log.time = self.match.start + timezone.timedelta(days=1)
 
-        exception = False
+        exception = None
         try:
             self.match_log.save()
-        except (IntegrityError, ValidationError) as e:
+        except ValidationError as e:
             print e
-            exception = True
+            exception = e
         
-        self.assertFalse(exception, "log with earlier date than match start")
+        self.assertFalse(exception, "log with earlier date than match start: {}".format(exception))
 
     def test_matches_judge_was_negative_invalid(self):
         self.judge.was_default_judge = False
 
         self.match.judge = self.judge
 
-        exception = False
+        exception = None
         try:
             self.judge.save()
             self.match.save()
-        except (IntegrityError, ValidationError):
-            exception = True
+        except ValidationError as e:
+            exception = e
 
         self.assertTrue(exception, "especially for Mr. Maciek")
     
@@ -130,92 +130,92 @@ class CoreTest(TestCase):
 
         self.match.judge = self.judge
 
-        exception = False
+        exception = None
         try:
             self.judge.save()
             self.match.save()
-        except (IntegrityError, ValidationError):
-            exception = True
+        except ValidationError as e:
+            exception = e
 
-        self.assertFalse(exception, "especially for Mr. Maciek")
+        self.assertFalse(exception, "especially for Mr. Maciek: {}".format(exception))
 
     def test_programs_wins_not_negative_invalid(self):
         self.program.wins = (-1)
 
-        exception = False
+        exception = None
         try:
             self.program.save()
-        except (IntegrityError, ValidationError):
-            exception = True
+        except ValidationError as e:
+            exception = e
 
         self.assertTrue(exception, "negative wins should throw errors")
     
     def test_programs_wins_not_negative_correct(self):
         self.program.wins = 0
 
-        exception = False
+        exception = None
         try:
             self.program.save()
-        except (IntegrityError, ValidationError):
-            exception = True
+        except ValidationError as e:
+            exception = e
 
-        self.assertFalse(exception, "non negative wins should not throw errors")
+        self.assertFalse(exception, "non negative wins should not throw errors: {}".format(exception))
 
     def test_programs_defeats_not_negative_invalid(self):
         self.program.defeats = (-1)
 
-        exception = False
+        exception = None
         try:
             self.program.save()
-        except (IntegrityError, ValidationError):
-            exception = True
+        except ValidationError as e:
+            exception = e
 
         self.assertTrue(exception, "negative defeats should throw errors")
     
     def test_programs_defeats_not_negative_correct(self):
         self.program.defeats = 0
 
-        exception = False
+        exception = None
         try:
             self.program.save()
-        except (IntegrityError, ValidationError):
-            exception = True
+        except ValidationError as e:
+            exception = e
 
-        self.assertFalse(exception, "non negative defeats should not throw errors")
+        self.assertFalse(exception, "non negative defeats should not throw errors: {}".format(exception))
 
     def test_programs_ties_not_negative_invalid(self):
         self.program.ties = (-1)
 
-        exception = False
+        exception = None
         try:
             self.program.save()
-        except (IntegrityError, ValidationError):
-            exception = True
+        except ValidationError as e:
+            exception = e
 
         self.assertTrue(exception, "negative ties should throw errors")
     
     def test_programs_ties_not_negative(self):
         self.program.ties = 0
 
-        exception = False
+        exception = None
         try:
             self.program.save()
-        except (IntegrityError, ValidationError):
-            exception = True
+        except ValidationError as e:
+            exception = e
 
-        self.assertFalse(exception, "non negative ties should not throw errors")
+        self.assertFalse(exception, "non negative ties should not throw errors: {}".format(exception))
 
     def test_programs_application_time_after_constest_start_invalid(self):
         self.program.application_time = timezone.now()
 
         self.contest.start = self.program.application_time + timezone.timedelta(days=1)
 
-        exception = False
+        exception = None
         try:
             self.contest.save()
             self.program.save()
-        except (IntegrityError, ValidationError):
-            exception = True
+        except ValidationError as e:
+            exception = e
 
         self.assertTrue(exception, "program can't be submitted before the contest start")
 
@@ -224,14 +224,14 @@ class CoreTest(TestCase):
 
         self.program.application_time = self.contest.start + timezone.timedelta(days=1)
 
-        exception = False
+        exception = None
         try:
             self.contest.save()
             self.program.save()
-        except (IntegrityError, ValidationError):
-            exception = True
+        except ValidationError as e:
+            exception = e
 
-        self.assertFalse(exception, "program can be submitted before the contest start")
+        self.assertFalse(exception, "program can be submitted before the contest start: {}".format(exception))
 
 
 
