@@ -30,14 +30,15 @@ class Judge(CleanModel):
         return "{} [{}]".format(self.path, self.id)
 
 
-class Match(models.Model):
+class Match(CleanModel):
     judge = models.ForeignKey(Judge)
     contest = models.ForeignKey(Contest)
     start = models.DateTimeField(default=timezone.now)
 
     def clean(self):
-        if self.judge.was_default_judge != True:
-            raise ValidationError("The judge was never default, it could not test this match.")
+        pass
+        # if self.judge.was_default_judge != True:
+        #     raise ValidationError("The judge was never default, it could not test this match.")
 
     def __unicode__(self):
         return "{}".format(self.id)

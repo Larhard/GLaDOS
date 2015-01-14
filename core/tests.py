@@ -32,6 +32,11 @@ class CoreTest(TestCase):
         self.program.name = 'test program'
         self.program.save()
 
+        self.match_log = MatchLog()
+        self.match_log.body = 'some random text'
+        self.match_log.match = self.match
+        self.match_log.save()
+
     def test_program_match_uniqueness(self):
         pm = ProgramMatch()
         pm.program = self.program
@@ -78,7 +83,6 @@ class CoreTest(TestCase):
         self.match.start = timezone.now()
         self.match.save()
 
-        self.match_log = MatchLog()
         self.match_log.match = self.match
         self.match_log.time = self.match.start - timezone.timedelta(days=1)
 
@@ -88,23 +92,23 @@ class CoreTest(TestCase):
         except (IntegrityError, ValidationError):
             exception = True
         
-        self.assertTrue(exception, "log with earlier date than contest")
+        self.assertTrue(exception, "log with earlier date than match start")
     
     def test_no_logs_before_match_start_correct(self):
         self.match.start = timezone.now()
         self.match.save()
 
-        self.match_log = MatchLog()
         self.match_log.match = self.match
-        self.match_log.time = self.match.start - timezone.timedelta(days=1)
+        self.match_log.time = self.match.start + timezone.timedelta(days=1)
 
         exception = False
         try:
             self.match_log.save()
-        except (IntegrityError, ValidationError):
+        except (IntegrityError, ValidationError) as e:
+            print e
             exception = True
         
-        self.assertFalse(exception, "log with earlier date than contest")
+        self.assertFalse(exception, "log with earlier date than match start")
 
     def test_matches_judge_was_negative_invalid(self):
         self.judge.was_default_judge = False
