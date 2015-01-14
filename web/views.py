@@ -1,3 +1,5 @@
+from django.contrib.auth import authenticate
+from django.core.urlresolvers import NoReverseMatch
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
 
@@ -32,4 +34,24 @@ def contest_create(request):
 
     return render(request, 'web/contest_create.html', {
         'error': error
+    })
+
+
+def login(request):
+    redirect_url = request.GET.get('r', '/')
+    login_message = ""
+
+    if 'login' in request.POST:
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            try:
+                return redirect(redirect_url)
+            except NoReverseMatch:
+                return redirect('/')
+        else:
+            login_message += "Login or Password incorrect"
+    return render(request, 'web/login_view.html', {
+        'login_message': login_message,
     })

@@ -1,0 +1,35 @@
+{% extends 'web/site.html' %}
+
+{% block title %}
+    {{ block.super }}
+    - Login
+{% endblock %}
+
+{% block login %}
+{% endblock %}
+
+{% block content %}
+    {% if login_message %}
+        <div class="login_message">
+        {{ login_message }}
+        </div>
+    {% endif %}
+    <form method="post" action="{% url 'web:login' %}?r={{ request.POST.r }}">
+        <ul>
+            <li>
+                <label>
+                    Login:
+                    <input type="text" name="username">
+                </label>
+            </li>
+            <li>
+                <label>
+                    Password:
+                    <input type="password" name="password">
+                </label>
+            </li>
+        </ul>
+        {% csrf_token %}
+        <input type="submit" name="login" value="submit">
+    </form>
+{% endblock %}

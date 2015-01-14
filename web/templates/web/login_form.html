@@ -1,0 +1,12 @@
+<form method="post" action="{% url 'web:login' %}?r={{ request.get_full_path | urlencode:'' }}">
+    <label>
+        Login:
+        <input type="text" name="username">
+    </label>
+    <label>
+        Password:
+        <input type="password" name="password">
+    </label>
+    {% csrf_token %}
+    <input type="submit" name="login" value="submit">
+</form>

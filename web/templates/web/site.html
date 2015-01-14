@@ -1,0 +1,11 @@
+{% extends 'web/base.html' %}
+
+{% block title %}
+    GLaDOS{# TODO read title from database #}
+{% endblock %}
+
+{% block login %}
+    <div>
+        {% include 'web/login_form.html' %}
+    </div>
+{% endblock %}
