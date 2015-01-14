@@ -49,7 +49,7 @@ class CoreTest(TestCase):
 
         self.assertTrue(exception, "(program match) pair is not unique")
 
-    def test_contest_clean_001(self):
+    def test_contest_clean_start_end_time(self):
         tmp = Contest()
         tmp.end = timezone.now()
         tmp.start = tmp.end - timezone.timedelta(days=1)
