@@ -11,6 +11,10 @@ class Contest(models.Model):
     default_judge = models.ForeignKey('Judge', related_name='default_judge', null=True, blank=True)
     players_count = models.IntegerField()
 
+    def clean(self):
+        if end < start:
+            raise forms.ValidationError("End can not occur before start.")
+
     def __unicode__(self):
         return "{} [{}]".format(self.name, self.id)
 

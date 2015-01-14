@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase
+from django.utils import timezone
 
 from core.models import *
 
@@ -46,3 +47,19 @@ class CoreTest(TestCase):
             exception = True
 
         self.assertTrue(exception, "(program match) pair is not unique")
+
+    def test_contest_clean_001(self):
+        tmp = Contest()
+        tmp.end = timezone.now()
+        tmp.start = tmp.end - timezone.timedelta(days=1)
+
+        exception = False
+        try:
+            tmp.save()
+        except (IntegrityError, ValidationError):
+            exception = True
+        
+        self.assertTrue(exception, "contest start can occur after contest end")
+
+
+
