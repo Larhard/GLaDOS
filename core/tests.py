@@ -10,6 +10,7 @@ class CoreTest(TestCase):
     def setUp(self):
         self.contest = Contest()
         self.contest.name = 'Test Contest'
+        self.contest.players_count = 1
         self.contest.save()
 
         self.judge = Judge()
