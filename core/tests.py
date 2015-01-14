@@ -3,7 +3,8 @@ from django.db import IntegrityError
 from django.test import TestCase
 from django.utils import timezone
 
-from core.models import *
+from core.models import Contest, Judge, Match, Program, ProgramMatch, MatchLog
+from glados_auth.models import GladosUser
 
 
 class CoreTest(TestCase):
@@ -15,6 +16,7 @@ class CoreTest(TestCase):
 
         self.judge = Judge()
         self.judge.path = 'some path'
+        self.judge.was_default_judge = True
         self.judge.contest = self.contest
         self.judge.save()
 
@@ -31,6 +33,11 @@ class CoreTest(TestCase):
         self.program.name = 'test program'
         self.program.save()
 
+        self.match_log = MatchLog()
+        self.match_log.body = 'some random text'
+        self.match_log.match = self.match
+        self.match_log.save()
+
     def test_program_match_uniqueness(self):
         pm = ProgramMatch()
         pm.program = self.program
@@ -41,95 +48,190 @@ class CoreTest(TestCase):
         pm.program = self.program
         pm.match = self.match
 
-        exception = False
+        exception = None
         try:
             pm.save()
-        except (IntegrityError, ValidationError):
-            exception = True
+        except IntegrityError as e:
+            exception = e
 
         self.assertTrue(exception, "(program match) pair is not unique")
 
-    def test_contest_clean_start_end_time(self):
-        contest = Contest()
-        contest.end = timezone.now()
-        contest.start = contest.end - timezone.timedelta(days=1)
+    def test_contest_clean_start_end_time_invalid(self):
+        self.contest.end = timezone.now()
+        self.contest.start = self.contest.end + timezone.timedelta(days=1)
 
-        exception = False
+        exception = None
         try:
-            contest.save()
-        except (IntegrityError, ValidationError):
-            exception = True
+            self.contest.save()
+        except ValidationError as e:
+            exception = e
         
-        self.assertTrue(exception, "contest start can occur after contest end")
+        self.assertTrue(exception, "contest start can't occur after contest end")
 
-    def test_no_logs_before_match_start(self):
-        match = Match()
-        match.start = timezone.now()
+    def test_contest_clean_start_end_time_correct(self):
+        self.contest.end = timezone.now()
+        self.contest.start = self.contest.end - timezone.timedelta(days=1)
 
-        match_log = MatchLog()
-        match_log.time = match.start - timezone.timedelta(days=1)
-
-        exception = False
+        exception = None
         try:
-            match.save()
-            match_log.save()
-        except (IntegrityError, ValidationError):
-            exception = True
+            self.contest.save()
+        except ValidationError as e:
+            exception = e
         
-        self.assertTrue(exception, "log with earlier date than contest")
+        self.assertFalse(exception, "contest start can occur after contest end: {}".format(exception))
 
-    def test_judge_was_default(self):
-        judge = Judge()
-        judge.was_default_judge = True
+    def test_no_logs_before_match_start_invalid(self):
+        self.match.start = timezone.now()
+        self.match.save()
 
-        match = Match()
-        match.judge = judge
+        self.match_log.match = self.match
+        self.match_log.time = self.match.start - timezone.timedelta(days=1)
 
-        exception = False
+        exception = None
         try:
-            judge.save()
-            match.save()
-        except (IntegrityError, ValidationError):
-            exception = True
+            self.match_log.save()
+        except ValidationError as e:
+            exception = e
+        
+        self.assertTrue(exception, "log with earlier date than match start")
+    
+    def test_no_logs_before_match_start_correct(self):
+        self.match.start = timezone.now()
+        self.match.save()
+
+        self.match_log.match = self.match
+        self.match_log.time = self.match.start + timezone.timedelta(days=1)
+
+        exception = None
+        try:
+            self.match_log.save()
+        except ValidationError as e:
+            print e
+            exception = e
+        
+        self.assertFalse(exception, "log with earlier date than match start: {}".format(exception))
+
+    def test_matches_judge_was_negative_invalid(self):
+        self.judge.was_default_judge = False
+
+        self.match.judge = self.judge
+
+        exception = None
+        try:
+            self.judge.save()
+            self.match.save()
+        except ValidationError as e:
+            exception = e
 
         self.assertTrue(exception, "especially for Mr. Maciek")
+    
+    def test_matches_judge_was_negative_correct(self):
+        self.judge.was_default_judge = True
 
-    def test_wins_not_negative(self):
-        program = Program()
-        program.wins = (-1)
+        self.match.judge = self.judge
 
-        exception = False
+        exception = None
         try:
-            program.save()
-        except (IntegrityError, ValidationError):
-            exception = True
+            self.judge.save()
+            self.match.save()
+        except ValidationError as e:
+            exception = e
+
+        self.assertFalse(exception, "especially for Mr. Maciek: {}".format(exception))
+
+    def test_programs_wins_not_negative_invalid(self):
+        self.program.wins = (-1)
+
+        exception = None
+        try:
+            self.program.save()
+        except ValidationError as e:
+            exception = e
 
         self.assertTrue(exception, "negative wins should throw errors")
+    
+    def test_programs_wins_not_negative_correct(self):
+        self.program.wins = 0
 
-    def test_defeats_not_negative(self):
-        program = Program()
-        program.defeats = (-1)
-
-        exception = False
+        exception = None
         try:
-            program.save()
-        except (IntegrityError, ValidationError):
-            exception = True
+            self.program.save()
+        except ValidationError as e:
+            exception = e
+
+        self.assertFalse(exception, "non negative wins should not throw errors: {}".format(exception))
+
+    def test_programs_defeats_not_negative_invalid(self):
+        self.program.defeats = (-1)
+
+        exception = None
+        try:
+            self.program.save()
+        except ValidationError as e:
+            exception = e
 
         self.assertTrue(exception, "negative defeats should throw errors")
+    
+    def test_programs_defeats_not_negative_correct(self):
+        self.program.defeats = 0
 
-    def test_ties_not_negative(self):
-        program = Program()
-        program.ties = (-1)
-
-        exception = False
+        exception = None
         try:
-            program.save()
-        except (IntegrityError, ValidationError):
-            exception = True
+            self.program.save()
+        except ValidationError as e:
+            exception = e
+
+        self.assertFalse(exception, "non negative defeats should not throw errors: {}".format(exception))
+
+    def test_programs_ties_not_negative_invalid(self):
+        self.program.ties = (-1)
+
+        exception = None
+        try:
+            self.program.save()
+        except ValidationError as e:
+            exception = e
 
         self.assertTrue(exception, "negative ties should throw errors")
+    
+    def test_programs_ties_not_negative(self):
+        self.program.ties = 0
 
+        exception = None
+        try:
+            self.program.save()
+        except ValidationError as e:
+            exception = e
+
+        self.assertFalse(exception, "non negative ties should not throw errors: {}".format(exception))
+
+    def test_programs_application_time_after_constest_start_invalid(self):
+        self.program.application_time = timezone.now()
+
+        self.contest.start = self.program.application_time + timezone.timedelta(days=1)
+
+        exception = None
+        try:
+            self.contest.save()
+            self.program.save()
+        except ValidationError as e:
+            exception = e
+
+        self.assertTrue(exception, "program can't be submitted before the contest start")
+
+    def test_programs_application_time_after_constest_start_correct(self):
+        self.contest.start = timezone.now()
+
+        self.program.application_time = self.contest.start + timezone.timedelta(days=1)
+
+        exception = None
+        try:
+            self.contest.save()
+            self.program.save()
+        except ValidationError as e:
+            exception = e
+
+        self.assertFalse(exception, "program can be submitted before the contest start: {}".format(exception))
 
 
 

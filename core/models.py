@@ -1,9 +1,11 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 from glados_auth.models import GladosUser
+from utils.models import CleanModel
 
 
-class Contest(models.Model):
+class Contest(CleanModel):
     name = models.CharField(max_length=256)
     description = models.TextField(null=True, blank=True)
     start = models.DateTimeField(default=timezone.now)
@@ -12,14 +14,17 @@ class Contest(models.Model):
     players_count = models.IntegerField()
 
     def clean(self):
-        if end < start:
-            raise forms.ValidationError("End can not occur before start.")
+        errors = {}
+        if self.end is not None and self.end < self.start:
+            errors['end'] = "End can not occur before start."
+        if errors:
+            raise ValidationError(errors)
 
     def __unicode__(self):
         return "{} [{}]".format(self.name, self.id)
 
 
-class Judge(models.Model):
+class Judge(CleanModel):
     path = models.CharField(max_length=256)
     contest = models.ForeignKey(Contest)
     was_default_judge = models.BooleanField(default=False)
@@ -28,34 +33,40 @@ class Judge(models.Model):
         return "{} [{}]".format(self.path, self.id)
 
 
-class Match(models.Model):
+class Match(CleanModel):
     judge = models.ForeignKey(Judge)
     contest = models.ForeignKey(Contest)
     start = models.DateTimeField(default=timezone.now)
 
     def clean(self):
-        if judge.was_default_judge != True:
-            raise forms.ValidationError("The judge was never default, it could not test this match.")
+        errors = {}
+        if self.judge.was_default_judge != True:
+            errors['was_default_judge'] = "The judge was never default, it could not test this match."
+        if errors:
+            raise ValidationError(errors)
 
     def __unicode__(self):
         return "{}".format(self.id)
 
 
-class MatchLog(models.Model):
+class MatchLog(CleanModel):
     match = models.ForeignKey(Match)
     time = models.DateTimeField(default=timezone.now)
     body = models.TextField()
     priority = models.IntegerField(default=0)
 
     def clean(self):
-        if time < match.start:
-            raise forms.ValidationError("Logs time set earlier than match log.")
+        errors = {}
+        if self.time < self.match.start:
+            errors['time'] = "Logs time set earlier than match log."
+        if errors:
+            raise ValidationError(errors)
 
     def __unicode__(self):
         return "{} ({}) [{}]".format(self.match_id, self.priority, self.id)
 
 
-class Program(models.Model):
+class Program(CleanModel):
     user = models.ForeignKey(GladosUser)
     contest = models.ForeignKey(Contest)
     name = models.CharField(max_length=256)
@@ -65,8 +76,19 @@ class Program(models.Model):
     ties = models.IntegerField(default=0)
 
     def clean(self):
-        if wins < 0 or defeats < 0 or ties < 0:
-            raise forms.ValidationError("Wins, defeats and ties should not be negative.")
+        errors = {}
+        if self.wins < 0:
+            errors['wins'] = "should not be negative"
+        if self.defeats < 0:
+            errors['defeats'] = "should not be negative"
+        if self.ties < 0:
+            errors['ties'] = "should not be negative"
+
+        if self.application_time < self.contest.start:
+            errors['application_time'] = "Program can't be submitted before contest"
+
+        if errors:
+            raise ValidationError(errors)
 
     def __unicode__(self):
         return "{} [{}]".format(self.name, self.id)
