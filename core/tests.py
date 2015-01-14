@@ -208,7 +208,7 @@ class CoreTest(TestCase):
 
         self.assertFalse(exception, "non negative ties should not throw errors")
 
-    def test_programs_application_time_after_constest_start_invalid(self):
+    def test_programs_application_time_after_contest_start_invalid(self):
         program = Program()
         program.application_time = timezone.now()
 
@@ -224,7 +224,7 @@ class CoreTest(TestCase):
 
         self.assertTrue(exception, "program can't be submitted before the contest start")
 
-    def test_programs_application_time_after_constest_start_correct(self):
+    def test_programs_application_time_after_contest_start_correct(self):
         contest = Contest()
         contest.start = timezone.now()
 
