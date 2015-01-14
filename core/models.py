@@ -14,8 +14,11 @@ class Contest(CleanModel):
     players_count = models.IntegerField()
 
     def clean(self):
+        errors = {}
         if self.end is not None and self.end < self.start:
-            raise ValidationError("End can not occur before start.")
+            errors['end'] = "End can not occur before start."
+        if errors:
+            raise ValidationError(errors)
 
     def __unicode__(self):
         return "{} [{}]".format(self.name, self.id)
@@ -36,9 +39,11 @@ class Match(CleanModel):
     start = models.DateTimeField(default=timezone.now)
 
     def clean(self):
-        pass
-        # if self.judge.was_default_judge != True:
-        #     raise ValidationError("The judge was never default, it could not test this match.")
+        errors = {}
+        if self.judge.was_default_judge != True:
+            errors['was_default_judge'] = "The judge was never default, it could not test this match."
+        if errors:
+            raise ValidationError(errors)
 
     def __unicode__(self):
         return "{}".format(self.id)
@@ -51,8 +56,11 @@ class MatchLog(CleanModel):
     priority = models.IntegerField(default=0)
 
     def clean(self):
+        errors = {}
         if self.time < self.match.start:
-            raise ValidationError("Logs time set earlier than match log.")
+            errors['time'] = "Logs time set earlier than match log."
+        if errors:
+            raise ValidationError(errors)
 
     def __unicode__(self):
         return "{} ({}) [{}]".format(self.match_id, self.priority, self.id)
@@ -68,11 +76,19 @@ class Program(CleanModel):
     ties = models.IntegerField(default=0)
 
     def clean(self):
-        if self.wins < 0 or self.defeats < 0 or self.ties < 0:
-            raise ValidationError("Wins, defeats and ties should not be negative.")
+        errors = {}
+        if self.wins < 0:
+            errors['wins'] = "should not be negative"
+        if self.defeats < 0:
+            errors['defeats'] = "should not be negative"
+        if self.ties < 0:
+            errors['ties'] = "should not be negative"
 
         if self.application_time < self.contest.start:
-            raise ValidationError("Program can't be submited before contest.")
+            errors['application_time'] = "Program can't be submited before contest"
+
+        if errors:
+            raise ValidationError(errors)
 
     def __unicode__(self):
         return "{} [{}]".format(self.name, self.id)

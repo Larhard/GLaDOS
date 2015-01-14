@@ -16,6 +16,7 @@ class CoreTest(TestCase):
 
         self.judge = Judge()
         self.judge.path = 'some path'
+        self.judge.was_default_judge = True
         self.judge.contest = self.contest
         self.judge.save()
 
@@ -62,7 +63,7 @@ class CoreTest(TestCase):
         exception = False
         try:
             self.contest.save()
-        except (IntegrityError, ValidationError):
+        except (IntegrityError, ValidationError) as e:
             exception = True
         
         self.assertTrue(exception, "contest start can't occur after contest end")
