@@ -49,21 +49,32 @@ class CoreTest(TestCase):
 
         self.assertTrue(exception, "(program match) pair is not unique")
 
-    def test_contest_clean_start_end_time(self):
-        contest = Contest()
-        contest.end = timezone.now()
-        contest.start = contest.end - timezone.timedelta(days=1)
+    def test_contest_clean_start_end_time_invalid(self):
+        self.contest.end = timezone.now()
+        self.contest.start = self.contest.end + timezone.timedelta(days=1)
 
         exception = False
         try:
-            contest.save()
+            self.contest.save()
         except (IntegrityError, ValidationError):
             exception = True
         
-        self.assertTrue(exception, "contest start can occur after contest end")
+        self.assertTrue(exception, "contest start can't occur after contest end")
 
-    def test_no_logs_before_match_start(self):
-        match = Match()
+    def test_contest_clean_start_end_time_correct(self):
+        self.contest.end = timezone.now()
+        self.contest.start = self.contest.end - timezone.timedelta(days=1)
+
+        exception = False
+        try:
+            self.contest.save()
+        except (IntegrityError, ValidationError):
+            exception = True
+        
+        self.assertFalse(exception, "contest start can occur after contest end")
+
+
+    def test_no_logs_before_match_start_invalid(self):
         match.start = timezone.now()
 
         match_log = MatchLog()
@@ -77,8 +88,39 @@ class CoreTest(TestCase):
             exception = True
         
         self.assertTrue(exception, "log with earlier date than contest")
+    
+    def test_no_logs_before_match_start_correct(self):
+        match.start = timezone.now()
 
-    def test_judge_was_default(self):
+        match_log = MatchLog()
+        match_log.time = match.start - timezone.timedelta(days=1)
+
+        exception = False
+        try:
+            match.save()
+            match_log.save()
+        except (IntegrityError, ValidationError):
+            exception = True
+        
+        self.assertFalse(exception, "log with earlier date than contest")
+
+    def test_matches_judge_was_negative_invalid(self):
+        judge = Judge()
+        judge.was_default_judge = False
+
+        match = Match()
+        match.judge = judge
+
+        exception = False
+        try:
+            judge.save()
+            match.save()
+        except (IntegrityError, ValidationError):
+            exception = True
+
+        self.assertTrue(exception, "especially for Mr. Maciek")
+    
+    def test_matches_judge_was_negative_correct(self):
         judge = Judge()
         judge.was_default_judge = True
 
@@ -92,9 +134,9 @@ class CoreTest(TestCase):
         except (IntegrityError, ValidationError):
             exception = True
 
-        self.assertTrue(exception, "especially for Mr. Maciek")
+        self.assertFalse(exception, "especially for Mr. Maciek")
 
-    def test_wins_not_negative(self):
+    def test_programs_wins_not_negative_invalid(self):
         program = Program()
         program.wins = (-1)
 
@@ -105,8 +147,20 @@ class CoreTest(TestCase):
             exception = True
 
         self.assertTrue(exception, "negative wins should throw errors")
+    
+    def test_programs_wins_not_negative_correct(self):
+        program = Program()
+        program.wins = 0
 
-    def test_defeats_not_negative(self):
+        exception = False
+        try:
+            program.save()
+        except (IntegrityError, ValidationError):
+            exception = True
+
+        self.assertFalse(exception, "non negative wins should not throw errors")
+
+    def test_programs_defeats_not_negative_invalid(self):
         program = Program()
         program.defeats = (-1)
 
@@ -117,8 +171,20 @@ class CoreTest(TestCase):
             exception = True
 
         self.assertTrue(exception, "negative defeats should throw errors")
+    
+    def test_programs_defeats_not_negative_correct(self):
+        program = Program()
+        program.defeats = 0
 
-    def test_ties_not_negative(self):
+        exception = False
+        try:
+            program.save()
+        except (IntegrityError, ValidationError):
+            exception = True
+
+        self.assertTrue(exception, "non negative defeats should not throw errors")
+
+    def test_programs_ties_not_negative_invalid(self):
         program = Program()
         program.ties = (-1)
 
@@ -129,7 +195,50 @@ class CoreTest(TestCase):
             exception = True
 
         self.assertTrue(exception, "negative ties should throw errors")
+    
+    def test_programs_ties_not_negative(self):
+        program = Program()
+        program.ties = 0
 
+        exception = False
+        try:
+            program.save()
+        except (IntegrityError, ValidationError):
+            exception = True
+
+        self.assertFalse(exception, "non negative ties should not throw errors")
+
+    def test_programs_application_time_after_constest_start_invalid(self):
+        program = Program()
+        program.application_time = timezone.now()
+
+        contest = Contest()
+        contest.start = program.application_time + timezone.timedelta(days=1)
+
+        exception = False
+        try:
+            contest.save()
+            program.save()
+        except (IntegrityError, ValidationError):
+            exception = True
+
+        self.assertTrue(exception, "program can't be submitted before the contest start")
+
+    def test_programs_application_time_after_constest_start_correct(self):
+        contest = Contest()
+        contest.start = timezone.now()
+
+        program = Program()
+        program.application_time = contest.start + timezone.timedelta(days=1)
+
+        exception = False
+        try:
+            contest.save()
+            program.save()
+        except (IntegrityError, ValidationError):
+            exception = True
+
+        self.assertFalse(exception, "program can be submitted before the contest start")
 
 
 

@@ -12,8 +12,11 @@ class Contest(models.Model):
     players_count = models.IntegerField()
 
     def clean(self):
-        if end < start:
+        print "hello" + '-' * 80
+        if self.end < self.start:
+            print "hello2" + '-' * 80
             raise forms.ValidationError("End can not occur before start.")
+        print "hello3" + '-' * 80
 
     def __unicode__(self):
         return "{} [{}]".format(self.name, self.id)
@@ -34,7 +37,7 @@ class Match(models.Model):
     start = models.DateTimeField(default=timezone.now)
 
     def clean(self):
-        if judge.was_default_judge != True:
+        if self.judge.was_default_judge != True:
             raise forms.ValidationError("The judge was never default, it could not test this match.")
 
     def __unicode__(self):
@@ -48,7 +51,7 @@ class MatchLog(models.Model):
     priority = models.IntegerField(default=0)
 
     def clean(self):
-        if time < match.start:
+        if self.time < self.match.start:
             raise forms.ValidationError("Logs time set earlier than match log.")
 
     def __unicode__(self):
@@ -65,8 +68,11 @@ class Program(models.Model):
     ties = models.IntegerField(default=0)
 
     def clean(self):
-        if wins < 0 or defeats < 0 or ties < 0:
+        if self.wins < 0 or self.defeats < 0 or self.ties < 0:
             raise forms.ValidationError("Wins, defeats and ties should not be negative.")
+
+        if self.application_time < self.contest.start:
+            raise forms.ValidationError("Program can't be submited before contest.")
 
     def __unicode__(self):
         return "{} [{}]".format(self.name, self.id)
