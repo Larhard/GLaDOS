@@ -3,7 +3,8 @@ from django.db import IntegrityError
 from django.test import TestCase
 from django.utils import timezone
 
-from core.models import *
+from core.models import Contest, Judge, Match, Program, ProgramMatch, MatchLog
+from glados_auth.models import GladosUser
 
 
 class CoreTest(TestCase):
@@ -73,16 +74,15 @@ class CoreTest(TestCase):
         
         self.assertFalse(exception, "contest start can occur after contest end")
 
-
     def test_no_logs_before_match_start_invalid(self):
-        match.start = timezone.now()
+        self.match.start = timezone.now()
 
         match_log = MatchLog()
-        match_log.time = match.start - timezone.timedelta(days=1)
+        match_log.time = self.match.start - timezone.timedelta(days=1)
 
         exception = False
         try:
-            match.save()
+            self.match.save()
             match_log.save()
         except (IntegrityError, ValidationError):
             exception = True
@@ -90,14 +90,14 @@ class CoreTest(TestCase):
         self.assertTrue(exception, "log with earlier date than contest")
     
     def test_no_logs_before_match_start_correct(self):
-        match.start = timezone.now()
+        self.match.start = timezone.now()
 
         match_log = MatchLog()
-        match_log.time = match.start - timezone.timedelta(days=1)
+        match_log.time = self.match.start - timezone.timedelta(days=1)
 
         exception = False
         try:
-            match.save()
+            self.match.save()
             match_log.save()
         except (IntegrityError, ValidationError):
             exception = True
