@@ -64,6 +64,10 @@ class Program(models.Model):
     defeats = models.IntegerField(default=0)
     ties = models.IntegerField(default=0)
 
+    def clean(self):
+        if wins < 0 or defeats < 0 or ties < 0:
+            raise forms.ValidationError("Wins, defeats and ties should not be negative.")
+
     def __unicode__(self):
         return "{} [{}]".format(self.name, self.id)
 
@@ -79,3 +83,5 @@ class ProgramMatch(models.Model):
 
     def __unicode__(self):
         return "{} {}".format(self.match_id, self.program_id)
+
+

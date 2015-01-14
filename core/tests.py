@@ -50,50 +50,85 @@ class CoreTest(TestCase):
         self.assertTrue(exception, "(program match) pair is not unique")
 
     def test_contest_clean_start_end_time(self):
-        tmp = Contest()
-        tmp.end = timezone.now()
-        tmp.start = tmp.end - timezone.timedelta(days=1)
+        contest = Contest()
+        contest.end = timezone.now()
+        contest.start = contest.end - timezone.timedelta(days=1)
 
         exception = False
         try:
-            tmp.save()
+            contest.save()
         except (IntegrityError, ValidationError):
             exception = True
         
         self.assertTrue(exception, "contest start can occur after contest end")
 
     def test_no_logs_before_match_start(self):
-        my_match = Match()
-        my_match.start = timezone.now()
+        match = Match()
+        match.start = timezone.now()
 
-        my_match_log = MatchLog()
-        my_match_log.time = my_match.start - timezone.timedelta(days=1)
+        match_log = MatchLog()
+        match_log.time = match.start - timezone.timedelta(days=1)
 
         exception = False
         try:
-            my_match.save()
-            my_match_log.save()
+            match.save()
+            match_log.save()
         except (IntegrityError, ValidationError):
             exception = True
         
         self.assertTrue(exception, "log with earlier date than contest")
 
     def test_judge_was_default(self):
-        my_judge = Judge()
-        my_judge.was_default_judge = True
+        judge = Judge()
+        judge.was_default_judge = True
 
-        my_match = Match()
-        my_match.judge = my_judge
+        match = Match()
+        match.judge = judge
 
         exception = False
         try:
-            my_judge.save()
-            my_match.save()
+            judge.save()
+            match.save()
         except (IntegrityError, ValidationError):
             exception = True
 
         self.assertTrue(exception, "especially for Mr. Maciek")
 
+    def test_wins_not_negative(self):
+        program = Program()
+        program.wins = (-1)
+
+        exception = False
+        try:
+            program.save()
+        except (IntegrityError, ValidationError):
+            exception = True
+
+        self.assertTrue(exception, "negative wins should throw errors")
+
+    def test_defeats_not_negative(self):
+        program = Program()
+        program.defeats = (-1)
+
+        exception = False
+        try:
+            program.save()
+        except (IntegrityError, ValidationError):
+            exception = True
+
+        self.assertTrue(exception, "negative defeats should throw errors")
+
+    def test_ties_not_negative(self):
+        program = Program()
+        program.ties = (-1)
+
+        exception = False
+        try:
+            program.save()
+        except (IntegrityError, ValidationError):
+            exception = True
+
+        self.assertTrue(exception, "negative ties should throw errors")
 
 
 
