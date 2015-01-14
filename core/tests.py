@@ -62,5 +62,23 @@ class CoreTest(TestCase):
         
         self.assertTrue(exception, "contest start can occur after contest end")
 
+    def test_no_logs_before_match_start(self):
+        my_match = Match()
+        my_match.start = timezone.now()
+
+        my_match_log = MatchLog()
+        my_match_log.time = my_match.start - timezone.timedelta(days=1)
+
+        exception = False
+        try:
+            my_match.save()
+            my_match_log.save()
+        except (IntegrityError, ValidationError):
+            exception = True
+        
+        self.assertTrue(exception, "log with earlier date than contest")
+
+
+
 
 

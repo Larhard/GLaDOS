@@ -42,6 +42,11 @@ class MatchLog(models.Model):
     body = models.TextField()
     priority = models.IntegerField(default=0)
 
+    def clean(self):
+        if time < match.start:
+            raise forms.ValidationError("Logs time set earlier than match log.")
+
+
     def __unicode__(self):
         return "{} ({}) [{}]".format(self.match_id, self.priority, self.id)
 
