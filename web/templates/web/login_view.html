@@ -14,7 +14,7 @@
         {{ login_message }}
         </div>
     {% endif %}
-    <form method="post" action="{% url 'web:login' %}?r={{ request.POST.r }}">
+    <form method="post" action="{% url 'web:login' %}?r={{ request.GET.r | urlencode:'' }}">
         <ul>
             <li>
                 <label>
