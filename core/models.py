@@ -2,9 +2,10 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 from glados_auth.models import GladosUser
+from utils.models import CleanModel
 
 
-class Contest(models.Model):
+class Contest(CleanModel):
     name = models.CharField(max_length=256)
     description = models.TextField(null=True, blank=True)
     start = models.DateTimeField(default=timezone.now)
@@ -13,17 +14,14 @@ class Contest(models.Model):
     players_count = models.IntegerField()
 
     def clean(self):
-        print "hello" + '-' * 80
-        if self.end < self.start:
-            print "hello2" + '-' * 80
+        if self.end is not None and self.end < self.start:
             raise ValidationError("End can not occur before start.")
-        print "hello3" + '-' * 80
 
     def __unicode__(self):
         return "{} [{}]".format(self.name, self.id)
 
 
-class Judge(models.Model):
+class Judge(CleanModel):
     path = models.CharField(max_length=256)
     contest = models.ForeignKey(Contest)
     was_default_judge = models.BooleanField(default=False)
@@ -45,7 +43,7 @@ class Match(models.Model):
         return "{}".format(self.id)
 
 
-class MatchLog(models.Model):
+class MatchLog(CleanModel):
     match = models.ForeignKey(Match)
     time = models.DateTimeField(default=timezone.now)
     body = models.TextField()

@@ -76,13 +76,14 @@ class CoreTest(TestCase):
 
     def test_no_logs_before_match_start_invalid(self):
         self.match.start = timezone.now()
+        self.match.save()
 
         self.match_log = MatchLog()
+        self.match_log.match = self.match
         self.match_log.time = self.match.start - timezone.timedelta(days=1)
 
         exception = False
         try:
-            self.match.save()
             self.match_log.save()
         except (IntegrityError, ValidationError):
             exception = True
@@ -91,13 +92,14 @@ class CoreTest(TestCase):
     
     def test_no_logs_before_match_start_correct(self):
         self.match.start = timezone.now()
+        self.match.save()
 
         self.match_log = MatchLog()
+        self.match_log.match = self.match
         self.match_log.time = self.match.start - timezone.timedelta(days=1)
 
         exception = False
         try:
-            self.match.save()
             self.match_log.save()
         except (IntegrityError, ValidationError):
             exception = True
