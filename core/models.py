@@ -85,7 +85,7 @@ class Program(CleanModel):
             errors['ties'] = "should not be negative"
 
         if self.application_time < self.contest.start:
-            errors['application_time'] = "Program can't be submited before contest"
+            errors['application_time'] = "Program can't be submitted before contest"
 
         if errors:
             raise ValidationError(errors)
