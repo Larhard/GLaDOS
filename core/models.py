@@ -11,6 +11,10 @@ class Contest(models.Model):
     default_judge = models.ForeignKey('Judge', related_name='default_judge', null=True, blank=True)
     players_count = models.IntegerField()
 
+    def clean(self):
+        if end < start:
+            raise forms.ValidationError("End can not occur before start.")
+
     def __unicode__(self):
         return "{} [{}]".format(self.name, self.id)
 
@@ -18,6 +22,7 @@ class Contest(models.Model):
 class Judge(models.Model):
     path = models.CharField(max_length=256)
     contest = models.ForeignKey(Contest)
+    was_default_judge = models.BooleanField(default=False)
 
     def __unicode__(self):
         return "{} [{}]".format(self.path, self.id)
@@ -28,6 +33,10 @@ class Match(models.Model):
     contest = models.ForeignKey(Contest)
     start = models.DateTimeField(default=timezone.now)
 
+    def clean(self):
+        if judge.was_default_judge != True:
+            raise forms.ValidationError("The judge was never default, it could not test this match.")
+
     def __unicode__(self):
         return "{}".format(self.id)
 
@@ -37,6 +46,10 @@ class MatchLog(models.Model):
     time = models.DateTimeField(default=timezone.now)
     body = models.TextField()
     priority = models.IntegerField(default=0)
+
+    def clean(self):
+        if time < match.start:
+            raise forms.ValidationError("Logs time set earlier than match log.")
 
     def __unicode__(self):
         return "{} ({}) [{}]".format(self.match_id, self.priority, self.id)
@@ -50,6 +63,10 @@ class Program(models.Model):
     wins = models.IntegerField(default=0)
     defeats = models.IntegerField(default=0)
     ties = models.IntegerField(default=0)
+
+    def clean(self):
+        if wins < 0 or defeats < 0 or ties < 0:
+            raise forms.ValidationError("Wins, defeats and ties should not be negative.")
 
     def __unicode__(self):
         return "{} [{}]".format(self.name, self.id)
@@ -66,3 +83,5 @@ class ProgramMatch(models.Model):
 
     def __unicode__(self):
         return "{} {}".format(self.match_id, self.program_id)
+
+
