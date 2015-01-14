@@ -176,7 +176,7 @@ class CoreTest(TestCase):
         except (IntegrityError, ValidationError):
             exception = True
 
-        self.assertTrue(exception, "non negative defeats should not throw errors")
+        self.assertFalse(exception, "non negative defeats should not throw errors")
 
     def test_programs_ties_not_negative_invalid(self):
         self.program.ties = (-1)

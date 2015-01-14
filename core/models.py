@@ -57,7 +57,7 @@ class MatchLog(CleanModel):
         return "{} ({}) [{}]".format(self.match_id, self.priority, self.id)
 
 
-class Program(models.Model):
+class Program(CleanModel):
     user = models.ForeignKey(GladosUser)
     contest = models.ForeignKey(Contest)
     name = models.CharField(max_length=256)
