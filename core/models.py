@@ -22,6 +22,7 @@ class Contest(models.Model):
 class Judge(models.Model):
     path = models.CharField(max_length=256)
     contest = models.ForeignKey(Contest)
+    was_default_judge = models.BooleanField(default=False)
 
     def __unicode__(self):
         return "{} [{}]".format(self.path, self.id)
@@ -31,6 +32,10 @@ class Match(models.Model):
     judge = models.ForeignKey(Judge)
     contest = models.ForeignKey(Contest)
     start = models.DateTimeField(default=timezone.now)
+
+    def clean(self):
+        if judge.was_default_judge != True:
+            raise forms.ValidationError("The judge was never default, it could not test this match.")
 
     def __unicode__(self):
         return "{}".format(self.id)
@@ -45,7 +50,6 @@ class MatchLog(models.Model):
     def clean(self):
         if time < match.start:
             raise forms.ValidationError("Logs time set earlier than match log.")
-
 
     def __unicode__(self):
         return "{} ({}) [{}]".format(self.match_id, self.priority, self.id)

@@ -78,6 +78,22 @@ class CoreTest(TestCase):
         
         self.assertTrue(exception, "log with earlier date than contest")
 
+    def test_judge_was_default(self):
+        my_judge = Judge()
+        my_judge.was_default_judge = True
+
+        my_match = Match()
+        my_match.judge = my_judge
+
+        exception = False
+        try:
+            my_judge.save()
+            my_match.save()
+        except (IntegrityError, ValidationError):
+            exception = True
+
+        self.assertTrue(exception, "especially for Mr. Maciek")
+
 
 
 
