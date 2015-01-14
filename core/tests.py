@@ -198,8 +198,18 @@ class CoreTest(TestCase):
 
         self.assertFalse(exception, "non negative ties should not throw errors")
 
+<<<<<<< HEAD
     def test_programs_application_time_after_constest_start_invalid(self):
         self.program.application_time = timezone.now()
+||||||| merged common ancestors
+    def test_programs_application_time_after_constest_start_invalid(self):
+        program = Program()
+        program.application_time = timezone.now()
+=======
+    def test_programs_application_time_after_contest_start_invalid(self):
+        program = Program()
+        program.application_time = timezone.now()
+>>>>>>> 18a1aef43b032adc9a5fc90e7fb275b2546ec109
 
         self.contest.start = self.program.application_time + timezone.timedelta(days=1)
 
@@ -212,8 +222,18 @@ class CoreTest(TestCase):
 
         self.assertTrue(exception, "program can't be submitted before the contest start")
 
+<<<<<<< HEAD
     def test_programs_application_time_after_constest_start_correct(self):
         self.contest.start = timezone.now()
+||||||| merged common ancestors
+    def test_programs_application_time_after_constest_start_correct(self):
+        contest = Contest()
+        contest.start = timezone.now()
+=======
+    def test_programs_application_time_after_contest_start_correct(self):
+        contest = Contest()
+        contest.start = timezone.now()
+>>>>>>> 18a1aef43b032adc9a5fc90e7fb275b2546ec109
 
         self.program.application_time = self.contest.start + timezone.timedelta(days=1)
 
