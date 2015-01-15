@@ -12,6 +12,12 @@ def contest_list(request):
         'contests': contests,
     })
 
+def contest_details(request, contest_id):
+    contest_info = Contest.objects.get(pk=contest_id)
+    return render(request, 'web/contest_details.html', {
+        'contest_info': contest_info,
+    })
+
 
 def contest_create(request):
     redirect_url = request.GET.get('r', '/')

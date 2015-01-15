@@ -1,0 +1,22 @@
+{% extends 'web/site.html' %}
+
+{% block title %}
+    {{ block.super }}
+    - Contests List
+{% endblock %}
+
+{% block content %}
+<p> Contest name: </p>
+<pre> {{ contest_info.name }} </pre>
+    
+<p> Contest description: </p>
+<pre> {{ contest_info.description }} </pre>
+
+<p> Contest default_judge: </p>
+<pre> {{ contest_info.default_judge }} </pre>
+
+<p> Contest players_count: </p>
+<pre> {{ contest_info.players_count }} </pre>
+
+{% endblock %}
+
