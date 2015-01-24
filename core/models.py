@@ -1,20 +1,9 @@
+from core.validators import Validator
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
-from django.utils.deconstruct import deconstructible
 from glados_auth.models import GladosUser
 from utils.models import CleanModel
-
-
-@deconstructible
-class Validator(object):
-    def __init__(self, predicate, message):
-        self.predicate = eval(predicate)
-        self.message = message
-
-    def __call__(self, *args, **kwargs):
-        if not self.predicate(*args, **kwargs):
-            raise ValidationError(self.message)
 
 
 class Contest(CleanModel):
