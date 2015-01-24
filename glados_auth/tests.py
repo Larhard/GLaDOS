@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase
@@ -69,3 +69,27 @@ class AuthTests(TestCase):
         except (ValidationError, IntegrityError) as e:
             exception = e
         self.assertIsNotNone(exception, "case insensitive duplicate created")
+
+    def test_login(self):
+        User = get_user_model()
+        username = 'test_user'
+        username2 = 'ffskkkjaf'
+        password = 'passwd'
+        password2 = 'fafafwef'
+        User.objects.create_user(username=username, password=password)
+
+        user = authenticate(username=username, password=password)
+        self.assertIsNotNone(user, 'valid authentication failed case sensitive')
+
+        user = authenticate(username=username.upper(), password=password)
+        self.assertIsNotNone(user, 'valid authentication failed case insensitive')
+
+        user = authenticate(username=username2, password=password)
+        self.assertIsNone(user, 'invalid authentication succeeded (wrong username)')
+
+        user = authenticate(username=username, password=password2)
+        self.assertIsNone(user, 'invalid authentication succeeded (wrong password)')
+
+        user = authenticate(username=username2, password=password2)
+        self.assertIsNone(user, 'invalid authentication succeeded (wrong username and password)')
+
