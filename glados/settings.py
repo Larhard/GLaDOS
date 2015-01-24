@@ -112,6 +112,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Custom authentitacion model
 
 AUTH_USER_MODEL = 'glados_auth.GladosUser'
+LOGIN_URL = 'web:login'
 
 # Load local settings from local_settings.py
 try:

@@ -1,4 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import NoReverseMatch
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
@@ -6,6 +8,7 @@ from django.shortcuts import render, redirect
 from core.models import Contest
 
 
+@login_required
 def contest_list(request):
     contests = Contest.objects.all()
     return render(request, 'web/contest_list.html', {
@@ -13,6 +16,7 @@ def contest_list(request):
     })
 
 
+@login_required
 def contest_details(request, contest_id):
     contest_info = Contest.objects.get(pk=contest_id)
     return render(request, 'web/contest_details.html', {
@@ -20,6 +24,7 @@ def contest_details(request, contest_id):
     })
 
 
+@staff_member_required
 def contest_create(request):
     redirect_url = request.GET.get('r', '/')
     error = ""
