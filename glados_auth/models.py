@@ -1,4 +1,6 @@
 import django.contrib.auth.models as django
+from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
 from django.db import IntegrityError
 
 
@@ -18,6 +20,24 @@ class GladosUserManager(django.UserManager):
 
 class GladosUser(django.AbstractUser):
     objects = GladosUserManager()
+
+    def clean_username(self):
+        username = self.username
+        try:
+            GladosUser.objects.get_by_natural_key(username)
+        except self.DoesNotExist:
+            return username
+        except self.MultipleObjectsReturned:
+            pass
+        raise ValidationError(_("A user with that username already exists."))
+
+    def clean(self):
+        self.username = self.clean_username()
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        self.clean()
+        super(GladosUser, self).save(force_insert, force_update, using, update_fields)
 
     def set_email(self, email):
         self.email = GladosUserManager.normalize_email(email)
