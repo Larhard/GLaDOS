@@ -5,13 +5,23 @@ from glados_auth.models import GladosUser
 from utils.models import CleanModel
 
 
+class Validator:
+    def __init__(self, predicate, message):
+        self.message = message
+        self.predicate = predicate
+
+    def __call__(self, *args, **kwargs):
+        if not self.predicate(*args, **kwargs):
+            raise ValidationError(self.message)
+
+
 class Contest(CleanModel):
     name = models.CharField(max_length=256)
     description = models.TextField(null=True, blank=True)
     start = models.DateTimeField(default=timezone.now)
     end = models.DateTimeField(null=True, blank=True)
     default_judge = models.ForeignKey('Judge', related_name='default_judge', null=True, blank=True)
-    players_count = models.IntegerField()
+    players_count = models.IntegerField(validators=[Validator(lambda k: k > 0, "players count not positive")])
 
     def clean(self):
         errors = {}

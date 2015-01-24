@@ -233,5 +233,35 @@ class CoreTest(TestCase):
 
         self.assertFalse(exception, "program can be submitted before the contest start: {}".format(exception))
 
+    def test_contest_positive_players_count_valid(self):
+        self.contest.players_count = 1
 
+        exception = None
+        try:
+            self.contest.save()
+        except ValidationError as e:
+            exception = e
+
+        self.assertIsNone(exception, "Players count should be positive {}".format(exception))
+
+    def test_contest_positive_players_count_invalid(self):
+        self.contest.players_count = -1
+
+        exception = None
+        try:
+            self.contest.save()
+        except ValidationError as e:
+            exception = e
+
+        self.assertIsNotNone(exception, "Players count should be positive")
+
+        self.contest.players_count = 0
+
+        exception = None
+        try:
+            self.contest.save()
+        except ValidationError as e:
+            exception = e
+
+        self.assertIsNotNone(exception, "Players count should be positive")
 
