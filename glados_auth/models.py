@@ -6,15 +6,51 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 
-class GladosUserManager(django.UserManager):
-    def _create_user(self, username, *args, **kwargs):
+class GladosUserManager(django.AbstractBaseUser):
+    @classmethod
+    def normalize_email(cls, email):
+        """
+        Normalize the address by lowercasing the domain part of the email
+        address.
+        """
+        email = email or ''
+        try:
+            email_name, domain_part = email.strip().rsplit('@', 1)
+        except ValueError:
+            pass
+        else:
+            email = '@'.join([email_name, domain_part.lower()])
+        return email
+
+    def _create_user(self, username, email, password,
+                     is_staff, is_superuser, **extra_fields):
+        """
+        Creates and saves a User with the given username, email and password.
+        """
         try:
             if username and self.get_by_natural_key(username):
                 raise IntegrityError(self.model.USERNAME_FIELD + " not unique")
         except self.model.DoesNotExist:
             pass
+        now = timezone.now()
+        if not username:
+            raise ValueError('The given username must be set')
+        email = self.normalize_email(email)
+        user = self.model(username=username, email=email,
+                          is_staff=is_staff, is_active=True,
+                          is_superuser=is_superuser, last_login=now,
+                          date_joined=now, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
-        return super(GladosUserManager, self)._create_user(username, *args, **kwargs)
+    def create_user(self, username, email=None, password=None, **extra_fields):
+        return self._create_user(username, email, password, False, False,
+                                 **extra_fields)
+
+    def create_superuser(self, username, email, password, **extra_fields):
+        return self._create_user(username, email, password, True, True,
+                                 **extra_fields)
 
     def get_by_natural_key(self, username):
         return self.get(**{self.model.USERNAME_FIELD + '__iexact': username})
