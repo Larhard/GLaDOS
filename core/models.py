@@ -103,6 +103,14 @@ class ProgramMatch(models.Model):
     class Meta:
         unique_together = ('match', 'program')
 
+    def clean(self):
+        errors = {}
+        if self.program.contest != self.match.contest:
+            errors['program_match'] = "Inconsistent data about contest"
+
+        if errors:
+            raise ValidationError(errors)
+
     def __unicode__(self):
         return "{} {}".format(self.match_id, self.program_id)
 
