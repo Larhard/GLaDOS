@@ -17,7 +17,6 @@ class GladosUserCreationForm(UserCreationForm):
 
     def clean_username(self):
         username = self.cleaned_data["username"]
-        return username
         model = self.Meta.model
         try:
             model.objects.get_by_natural_key(username)

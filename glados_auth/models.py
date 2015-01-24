@@ -23,13 +23,16 @@ class GladosUser(django.AbstractUser):
 
     def clean_username(self):
         username = self.username
+        user = None
         try:
-            GladosUser.objects.get_by_natural_key(username)
+            user = GladosUser.objects.get_by_natural_key(username)
         except self.DoesNotExist:
             return username
         except self.MultipleObjectsReturned:
-            pass
-        raise ValidationError(_("A user with that username already exists."))
+            raise ValidationError(_("Multiple users with that username exists."))
+        if self.pk and self.pk != user.pk:
+            raise ValidationError(_("A user with that username already exists."))
+        return user.username
 
     def clean(self):
         self.username = self.clean_username()

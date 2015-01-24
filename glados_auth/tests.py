@@ -1,10 +1,10 @@
 from django.contrib.auth import get_user_model, authenticate
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError
-from django.test import TestCase
+from django.db import IntegrityError, transaction
+from django.test import TestCase, TransactionTestCase
 
 
-class AuthTests(TestCase):
+class AuthTests(TransactionTestCase):
     def test_register(self):
         User = get_user_model()
 
