@@ -1,19 +1,21 @@
-{% if not user.is_authenticated %}
-    <form method="post" action="{% url 'web:login' %}?r={{ request.get_full_path | urlencode:'' }}">
-        <label>
-            Login:
-            <input type="text" name="username">
-        </label>
-        <label>
-            Password:
-            <input type="password" name="password">
-        </label>
-        {% csrf_token %}
-        <input type="submit" name="login" value="submit">
-    </form>
-{% else %}
-    <form method="post" action="{% url 'web:logout' %}?r={{ request.get_full_path | urlencode:'' }}">
-        {% csrf_token %}
-        <input type="submit" name="logout" value="logout">
-    </form>
-{% endif %}
+<div class="small_login_form">
+    {% if not user.is_authenticated %}
+        <form method="post" action="{% url 'web:login' %}?r={{ request.get_full_path | urlencode:'' }}">
+            <label>
+                Login:
+                <input type="text" name="username">
+            </label>
+            <label>
+                Password:
+                <input type="password" name="password">
+            </label>
+            {% csrf_token %}
+            <input type="submit" name="login" value="submit">
+        </form>
+    {% else %}
+        <form method="post" action="{% url 'web:logout' %}?r={{ request.get_full_path | urlencode:'' }}">
+            {% csrf_token %}
+            <input type="submit" name="logout" value="logout">
+        </form>
+    {% endif %}
+</div>

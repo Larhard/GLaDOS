@@ -1,0 +1,20 @@
+body {
+    background-color: #0e485b;
+    color: #feff3f;
+}
+
+div.site_wrapper {
+    background-color: #000000;
+}
+
+div.small_login_form {
+    text-align: right;
+}
+
+a {
+    color: #feff3f;
+}
+
+a:hover {
+    color: #ffffff;
+}
