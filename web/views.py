@@ -26,7 +26,7 @@ def contest_details(request, contest_id):
 
 @staff_member_required
 def contest_create(request):
-    redirect_url = request.GET.get('r', '/')
+    redirect_url = request.GET.get('next', '/')
     error = ""
 
     if 'create' in request.POST:
@@ -50,7 +50,7 @@ def contest_create(request):
 
 
 def login_view(request):
-    redirect_url = request.GET.get('r', '/')
+    redirect_url = request.GET.get('next', '/')
     login_message = ""
 
     if 'login' in request.POST:
@@ -71,7 +71,7 @@ def login_view(request):
 
 
 def logout_view(request):
-    redirect_url = request.GET.get('r', '/')
+    redirect_url = request.GET.get('next', '/')
 
     logout(request)
 
