@@ -1,0 +1,31 @@
+{% extends 'web/site.html' %}
+
+{% block title %}
+    {{ block.super }}
+    - {{contest.name}} contest results
+{% endblock %}
+
+{% block content %}
+    <p> {{contest.name}} contest </p> <br>
+    Results:
+    <table>
+        <tr>
+            <th>id</th>
+            <th>Name</th>
+            <th>wins</th>
+            <th>defeats</th>
+            <th>ties</th>
+        </tr>
+        {% for prog in programs %}
+            <tr>
+                <td>{{ prog.id }}</td>
+                <td>{{ prog.name }}</td>
+                <td>{{ prog.wins }}</td>
+                <td>{{ prog.defeats }}</td>
+                <td>{{ prog.ties }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}
+

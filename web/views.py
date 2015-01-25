@@ -6,6 +6,7 @@ from django.db import IntegrityError
 from django.shortcuts import render, redirect
 
 from core.models import Contest
+from core.models import Program
 
 
 @login_required
@@ -21,6 +22,15 @@ def contest_details(request, contest_id):
     contest_info = Contest.objects.get(pk=contest_id)
     return render(request, 'web/contest_details.html', {
         'contest_info': contest_info,
+    })
+
+@login_required
+def contest_results(request, contest_id):
+    programs = Program.objects.filter(contest=contest_id)
+    contest = Contest.objects.get(pk=contest_id)
+    return render(request, 'web/contest_results.html', {
+        'programs': programs,
+        'contest': contest,
     })
 
 

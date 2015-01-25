@@ -18,5 +18,8 @@
 <p> Contest players_count: </p>
 <pre> {{ contest_info.players_count }} </pre>
 
+<pre><a href="{% url 'web:contest_results' contest_info.id %}">
+{{ contest_info.name }} contest results</a></pre>
+
 {% endblock %}
 
