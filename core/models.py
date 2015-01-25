@@ -27,7 +27,6 @@ class Contest(CleanModel):
 
 class Judge(CleanModel):
     path = models.CharField(max_length=256)
-    contest = models.ForeignKey(Contest)
     was_default_judge = models.BooleanField(default=False)
 
     def __unicode__(self):
