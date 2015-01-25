@@ -19,6 +19,10 @@ In release use fcgi
     $ ./manage.py collectstatic
     $ ./manage.py runfcgi
 
+Test model
+    
+    $ ./manage.py test core/tests/
+
 # Gra testowa: Zgadywanie liczby
 
 Każdy gracz wybiera liczbę. Judge pyta graczy, kto co wybrał.
