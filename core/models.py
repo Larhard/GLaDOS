@@ -42,6 +42,8 @@ class Match(CleanModel):
         errors = {}
         if self.judge.was_default_judge != True:
             errors['was_default_judge'] = "The judge was never default, it could not test this match."
+        if self.contest.start > self.start:
+            errors['time_inconsistency'] = "Match could not start before the contest it belongs to."
         if errors:
             raise ValidationError(errors)
 

@@ -139,6 +139,34 @@ class CoreTest(TestCase):
 
         self.assertFalse(exception, "especially for Mr. Maciek: {}".format(exception))
 
+    def test_match_starts_after_contest_invalid(self):
+        self.contest.start = timezone.now()
+
+        self.match.start = self.contest.start - timezone.timedelta(days=1)
+
+        exception = None
+        try:
+            self.contest.save()
+            self.match.save()
+        except ValidationError as e:
+            exception = e
+
+        self.assertTrue(exception, "does not throw exception when match starts before the contest starts")
+
+    def test_match_starts_after_contest_correct(self):
+        self.contest.start = timezone.now()
+
+        self.match.start = self.contest.start + timezone.timedelta(days=1)
+
+        exception = None
+        try:
+            self.contest.save()
+            self.match.save()
+        except ValidationError as e:
+            exception = e
+
+        self.assertFalse(exception, "does throw exception even when match starts correctly after contest starts") 
+
     def test_programs_wins_not_negative_invalid(self):
         self.program.wins = (-1)
 
