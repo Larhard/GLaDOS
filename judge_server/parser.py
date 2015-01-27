@@ -29,10 +29,11 @@ class MatchParser(ParserBase):
         super(MatchParser, self).__init__(*args, **kwargs)
 
         self.match_manager = self.kwargs['match_manager']
+        self.conn = self.kwargs['connection']
         self.user = self.kwargs['user']
         self.contest = self.kwargs['contest']
 
-        self.match_session = self.match_manager.get_session(user=self.user, contest=self.contest)
+        self.match_session = self.match_manager.get_session(user=self.user, contest=self.contest, conn=self.conn)
 
     def cmd_help(self, what):
         reply = what

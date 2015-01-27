@@ -37,28 +37,28 @@ class ParserTest(TestCase):
         self.match_manager = MatchManager()
 
     def test_parse_join(self):
-        parser = InitParser(self.client_thread, match_manager=self.match_manager)
+        parser = InitParser(connection=self.client_thread, match_manager=self.match_manager)
         reply, new_parser = parser.parse('JOIN {} AS {} PASSWORD {}'.format(self.contest1.id,
             quote('user1'), quote('passwd1')))
         self.assertRegexpMatches(reply, "OK\n")
         self.assertNotEqual(parser, new_parser)
 
     def test_parse_join_invalid_passwd(self):
-        parser = InitParser(self.client_thread, match_manager=self.match_manager)
+        parser = InitParser(connection=self.client_thread, match_manager=self.match_manager)
         reply, new_parser = parser.parse('JOIN {} AS {} PASSWORD {}'.format(self.contest1.id,
             quote('user1'), quote('random_password')))
         self.assertRegexpMatches(reply, "FAIL INVALID_PASSWORD\n")
         self.assertEqual(parser, new_parser)
 
     def test_parse_join_invalid_contest(self):
-        parser = InitParser(self.client_thread, match_manager=self.match_manager)
+        parser = InitParser(connection=self.client_thread, match_manager=self.match_manager)
         reply, new_parser = parser.parse('JOIN {} AS {} PASSWORD {}'.format(1234567890,
             quote('user1'), quote('passwd1')))
         self.assertRegexpMatches(reply, "FAIL INVALID_CONTEST\n")
         self.assertEqual(parser, new_parser)
 
     def test_parse_join_ugly_password(self):
-        parser = InitParser(self.client_thread, match_manager=self.match_manager)
+        parser = InitParser(connection=self.client_thread, match_manager=self.match_manager)
         reply, new_parser = parser.parse('JOIN {} AS {} PASSWORD {}'.format(self.contest1.id,
             quote('user2'), quote('hasło mocne')))
         self.assertRegexpMatches(reply, "OK\n")
