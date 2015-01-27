@@ -16,6 +16,11 @@ class Contest(CleanModel):
 
     def clean(self):
         errors = {}
+
+        if self.default_judge is not None:
+            self.default_judge.was_default_judge = True
+            self.default_judge.save()
+
         if self.end is not None and self.end < self.start:
             errors['end'] = "End can not occur before start."
         if errors:
