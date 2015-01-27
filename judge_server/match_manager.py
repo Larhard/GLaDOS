@@ -4,10 +4,23 @@ import re
 
 
 class MatchSession(object):
-    def __init__(self, user, conn, match):
+    def __init__(self, user, conn, match, player_id):
         self.user = user
         self.conn = conn
         self.match = match
+        self.player_id = player_id
+
+    def send(self, what):
+        msg = '{} {}'.format(self.player_id, what)
+        self.match.judge.send(msg)
+
+
+class JudgeWrapper(object):
+    def __init__(self):
+        pass
+
+    def send(self, what):
+        print "judge: receive: {}".format(what)
 
 
 class MatchThread(threading.Thread):
@@ -29,21 +42,21 @@ class Match(object):
     def __init__(self, contest):
         self.contest = contest
         self.lobby = []
-        self.match_thread = MatchThread(self)
+        self.judge = JudgeWrapper()
 
     def register(self, user, conn):
         self.lobby.append(user)
-        return MatchSession(user=user, conn=conn, match=self)
+        return MatchSession(user=user, conn=conn, match=self, player_id=len(self.lobby))
 
     def is_ready(self):
         assert self.contest.players_count <= len(self.lobby)
         return self.contest.players_count == len(self.lobby)
 
     def start(self):
-        self.match_thread.start()
+        self.judge.send('-1 START')
 
     def close(self):
-        self.match_thread.stop()
+        pass
 
 
 class MatchManager(object):

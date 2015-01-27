@@ -35,9 +35,9 @@ class MatchParser(ParserBase):
 
         self.match_session = self.match_manager.get_session(user=self.user, contest=self.contest, conn=self.conn)
 
-    def cmd_help(self, what):
-        reply = what
-        return reply, self
+    def cmd_all(self, what):
+        self.match_session.send(what)
+        return '', self
 
 
 class InitParser(ParserBase):
