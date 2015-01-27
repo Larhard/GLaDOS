@@ -1,7 +1,7 @@
 # coding=utf-8
 
 from urllib import quote
-from core.models import Contest
+from core.models import Contest, Judge
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from judge_server.match_manager import MatchManager
@@ -18,14 +18,20 @@ class FakeClient():
 
 class ParserTest(TestCase):
     def setUp(self):
+        self.judge = Judge()
+        self.judge.path = '/example/judge'
+        self.judge.save()
+
         self.contest1 = Contest()
         self.contest1.name = "test_contest_1"
         self.contest1.players_count = 1
+        self.contest1.default_judge = self.judge
         self.contest1.save()
 
         self.contest2 = Contest()
         self.contest2.name = "test_contest_2"
         self.contest2.players_count = 2
+        self.contest2.default_judge = self.judge
         self.contest2.save()
 
         User = get_user_model()
