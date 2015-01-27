@@ -38,7 +38,7 @@ class InitParser(ParserBase):
         cmd = re.match('^\s*help\s*$', what, re.I)
         if cmd:
             reply = ""
-            reply += "JOIN <contest_id> AS <user_id>\n"
+            reply += 'JOIN <contest_id> AS "<username>" PASSWORD "<password>"\n'
             return reply, self
 
     def cmd_join(self, what):
