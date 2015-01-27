@@ -49,7 +49,7 @@ class Match(object):
         return MatchSession(user=user, conn=conn, match=self, player_id=len(self.lobby))
 
     def is_ready(self):
-        assert self.contest.players_count <= len(self.lobby)
+        assert self.contest.players_count >= len(self.lobby)
         return self.contest.players_count == len(self.lobby)
 
     def start(self):
