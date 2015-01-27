@@ -7,6 +7,14 @@ from django.test import TestCase
 from judge_server.parser import InitParser
 
 
+class FakeClient():
+    def __init__(self, out):
+        self.out = out
+
+    def send(self, what):
+        self.out.append(what)
+
+
 class ParserTest(TestCase):
     def setUp(self):
         self.contest1 = Contest()
@@ -23,29 +31,32 @@ class ParserTest(TestCase):
         self.user1 = User.objects.create_user("user1", password="passwd1")
         self.user2 = User.objects.create_user("user2", password="hasło mocne")
 
+        self.client_out = []
+        self.client_thread = FakeClient(self.client_out)
+
     def test_parse_join(self):
-        parser = InitParser()
+        parser = InitParser(self.client_thread)
         reply, new_parser = parser.parse('JOIN {} AS {} PASSWORD {}'.format(self.contest1.id,
             quote('user1'), quote('passwd1')))
         self.assertRegexpMatches(reply, "OK\n")
         self.assertNotEqual(parser, new_parser)
 
     def test_parse_join_invalid_passwd(self):
-        parser = InitParser()
+        parser = InitParser(self.client_thread)
         reply, new_parser = parser.parse('JOIN {} AS {} PASSWORD {}'.format(self.contest1.id,
             quote('user1'), quote('random_password')))
         self.assertRegexpMatches(reply, "FAIL INVALID_PASSWORD\n")
         self.assertEqual(parser, new_parser)
 
     def test_parse_join_invalid_contest(self):
-        parser = InitParser()
+        parser = InitParser(self.client_thread)
         reply, new_parser = parser.parse('JOIN {} AS {} PASSWORD {}'.format(1234567890,
             quote('user1'), quote('passwd1')))
         self.assertRegexpMatches(reply, "FAIL INVALID_CONTEST\n")
         self.assertEqual(parser, new_parser)
 
     def test_parse_join_ugly_password(self):
-        parser = InitParser()
+        parser = InitParser(self.client_thread)
         reply, new_parser = parser.parse('JOIN {} AS {} PASSWORD {}'.format(self.contest1.id,
             quote('user2'), quote('hasło mocne')))
         self.assertRegexpMatches(reply, "OK\n")

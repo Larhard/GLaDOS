@@ -6,8 +6,8 @@ import re
 
 
 class ParserBase(object):
-    def __init__(self):
-        pass
+    def __init__(self, client):
+        self.client = client
 
     def parse(self, what):
         """
@@ -25,8 +25,8 @@ class ParserBase(object):
 
 
 class MatchParser(ParserBase):
-    def __init__(self, contest, user):
-        super(MatchParser, self).__init__()
+    def __init__(self, client, contest, user):
+        super(MatchParser, self).__init__(client)
         self.contest_id = contest
         self.user_id = user
 
@@ -61,4 +61,4 @@ class InitParser(ParserBase):
             assert contest is not None
             assert user is not None
 
-            return "OK\n", MatchParser(contest, user)
+            return "OK\n", MatchParser(self.client, contest, user)
