@@ -58,6 +58,7 @@ class ServerThread(threading.Thread):
         self.running = False
 
         self.sock = socket.socket()
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.server.host, self.server.port))
 
         self.connections = weakref.WeakSet()
