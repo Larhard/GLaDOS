@@ -77,6 +77,6 @@ class MatchManager(object):
 
             if match.is_ready():
                 del self.matches[contest.id]
-            match.start()
+                match.start()
 
             return match_session
