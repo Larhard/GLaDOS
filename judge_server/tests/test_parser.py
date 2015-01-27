@@ -4,7 +4,7 @@ from urllib import quote
 from core.models import Contest
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from judge_server.match_manager import MatchDB
+from judge_server.match_manager import MatchManager
 from judge_server.parser import InitParser
 
 
@@ -34,7 +34,7 @@ class ParserTest(TestCase):
 
         self.client_thread = FakeClient()
 
-        self.match_manager = MatchDB()
+        self.match_manager = MatchManager()
 
     def test_parse_join(self):
         parser = InitParser(self.client_thread, match_manager=self.match_manager)

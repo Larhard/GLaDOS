@@ -85,7 +85,7 @@ class Match(object):
         pass
 
 
-class MatchDB(object):
+class MatchManager(object):
     def __init__(self):
         self.matches_lock = threading.RLock
         self.matches = {}

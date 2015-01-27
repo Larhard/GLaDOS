@@ -1,7 +1,7 @@
 import socket
 import threading
 import weakref
-from judge_server.match_manager import MatchDB
+from judge_server.match_manager import MatchManager
 
 from judge_server.parser import InitParser
 
@@ -62,7 +62,7 @@ class ServerThread(threading.Thread):
 
         self.connections = weakref.WeakSet()
 
-        self.match_manager = MatchDB()
+        self.match_manager = MatchManager()
 
     def run(self):
         self.running = True
