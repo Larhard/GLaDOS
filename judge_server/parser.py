@@ -8,14 +8,14 @@ import re
 class ParserBase(object):
     def __init__(self, client):
         self.client = client
+        self.cmd_regex = re.compile('^cmd_')
 
     def parse(self, what):
         """
         @param what: string to parse
         @return: (reply message, None or new parser)
         """
-        cmd_regex = re.compile('^cmd_')
-        commands = [k for k in dir(self) if cmd_regex.match(k)]
+        commands = [k for k in dir(self) if self.cmd_regex.match(k)]
         for cmd_name in commands:
             cmd = getattr(self, cmd_name)
             res = cmd(what)
