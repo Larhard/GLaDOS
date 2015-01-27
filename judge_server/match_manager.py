@@ -1,5 +1,6 @@
 import threading
 import time
+import core.models
 from judge_server.judge import JudgeWrapper
 import re
 
@@ -42,6 +43,13 @@ class Match(object):
         self.lobby = []
         self.judge = JudgeWrapper(match=self)
 
+        self.match = core.models.Match()
+        self.match.contest = self.contest
+        self.match.judge = self.contest.default_judge
+        self.match.save()
+
+        self.log("match: init lobby")
+
     def register(self, user, conn):
         self.lobby.append(Match.User(user, conn))
         return MatchSession(user=user, conn=conn, match=self, player_id=len(self.lobby))
@@ -70,8 +78,18 @@ class Match(object):
 
             return
 
+        self.log("judge: undefined message: {}".format(what))
+
     def start(self):
+        self.log("match: start")
         self.judge.send('-1 START')
+
+    def log(self, what, priority=0):
+        log = core.models.MatchLog()
+        log.match = self.match
+        log.body = what
+        log.priority = priority
+        log.save()
 
     def close(self):
         pass
