@@ -25,7 +25,18 @@ class ParserBase(object):
 
 
 class MatchParser(ParserBase):
-    pass
+    def __init__(self, *args, **kwargs):
+        super(MatchParser, self).__init__(*args, **kwargs)
+
+        self.match_manager = self.kwargs['match_manager']
+        self.user = self.kwargs['user']
+        self.contest = self.kwargs['contest']
+
+        # self.match_session = self.match_manager.get_session(user=self.user, contest=self.contest)
+
+    def cmd_help(self, what):
+        reply = what
+        return reply, self
 
 
 class InitParser(ParserBase):

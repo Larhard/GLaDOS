@@ -1,6 +1,7 @@
 import socket
 import threading
 import weakref
+from judge_server.match_manager import MatchDB
 
 from judge_server.parser import InitParser
 
@@ -22,11 +23,12 @@ def split_socket(conn):
 
 
 class ClientThread(threading.Thread):
-    def __init__(self, conn, addr):
+    def __init__(self, conn, addr, server):
         super(ClientThread, self).__init__()
+        self.server = server
         self.conn = conn
         self.addr = addr
-        self.parser = InitParser(connection=self)
+        self.parser = InitParser(connection=self, match_manager=self.server.match_manager)
         self.send_lock = threading.RLock()
 
     def send(self, what):
@@ -60,13 +62,15 @@ class ServerThread(threading.Thread):
 
         self.connections = weakref.WeakSet()
 
+        self.match_manager = MatchDB()
+
     def run(self):
         self.running = True
         try:
             self.sock.listen(1)
             while self.running:
                 conn, addr = self.sock.accept()
-                client_thread = ClientThread(conn, addr)
+                client_thread = ClientThread(conn, addr, self)
                 client_thread.setDaemon(True)
                 client_thread.start()
                 self.connections.add(conn)
