@@ -8,8 +8,8 @@ from judge_server.parser import InitParser
 
 
 class FakeClient():
-    def __init__(self, out):
-        self.out = out
+    def __init__(self):
+        self.out = []
 
     def send(self, what):
         self.out.append(what)
@@ -31,8 +31,7 @@ class ParserTest(TestCase):
         self.user1 = User.objects.create_user("user1", password="passwd1")
         self.user2 = User.objects.create_user("user2", password="hasło mocne")
 
-        self.client_out = []
-        self.client_thread = FakeClient(self.client_out)
+        self.client_thread = FakeClient()
 
     def test_parse_join(self):
         parser = InitParser(self.client_thread)
