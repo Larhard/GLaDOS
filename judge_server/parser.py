@@ -25,13 +25,10 @@ class ContestParser(ParserBase):
     match_db = SimpleMatchDB()
 
     def __init__(self, contest_id, user_id):
-        ParserBase.__init__(self)
+        super(ContestParser, self).__init__()
         self.contest_id = contest_id
         self.user_id = user_id
         self.match_session = self.match_db.get_match_session(self.contest_id, self.user_id)
-
-    def parse(self, what):
-        return what, self
 
 
 class InitParser(ParserBase):
