@@ -16,11 +16,12 @@ class MatchSession(object):
 
 
 class JudgeWrapper(object):
-    def __init__(self):
-        pass
+    def __init__(self, match):
+        self.match = match
 
     def send(self, what):
-        print "judge: receive: {}".format(what)
+        # broadcast echo for now
+        self.match.send("0 judge received: {}\n".format(what))
 
 
 class MatchThread(threading.Thread):
@@ -39,18 +40,43 @@ class MatchThread(threading.Thread):
 
 
 class Match(object):
+    class User(object):
+        def __init__(self, user, conn):
+            self.user = user
+            self.conn = conn
+
     def __init__(self, contest):
         self.contest = contest
         self.lobby = []
-        self.judge = JudgeWrapper()
+        self.judge = JudgeWrapper(match=self)
 
     def register(self, user, conn):
-        self.lobby.append(user)
+        self.lobby.append(Match.User(user, conn))
         return MatchSession(user=user, conn=conn, match=self, player_id=len(self.lobby))
 
     def is_ready(self):
         assert self.contest.players_count >= len(self.lobby)
         return self.contest.players_count == len(self.lobby)
+
+    def send(self, what):
+        # ignore comments
+        match = re.match('^#', what)
+        if match is not None:
+            return
+
+        # message
+        match = re.match('^(?P<recipient>-?\d+)\s?(?P<message>.*)$', what, re.S)
+        if match is not None:
+            recipient = int(match.group('recipient'))
+            message = match.group('message')
+
+            if recipient == 0:
+                for user in self.lobby:
+                    user.conn.send(message)
+            elif recipient > 0:
+                self.lobby[recipient].conn.send(message)
+
+            return
 
     def start(self):
         self.judge.send('-1 START')
