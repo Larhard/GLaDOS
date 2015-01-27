@@ -38,7 +38,7 @@ class InitParser(ParserBase):
     def cmd_help(self, what):
         cmd = re.match('^\s*help\s*$', what, re.I)
         if cmd:
-            reply = 'OK'
+            reply = 'OK\n'
             reply += '# JOIN <contest_id> AS <urlencoded username> PASSWORD <urlencoded password>\n'
             return reply, self
 
