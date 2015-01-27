@@ -40,7 +40,7 @@ class Match(object):
 
 class MatchManager(object):
     def __init__(self):
-        self.matches_lock = threading.RLock
+        self.matches_lock = threading.RLock()
         self.matches = {}
 
     def get_session(self, contest, user):
