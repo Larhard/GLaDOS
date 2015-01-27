@@ -1,3 +1,4 @@
+from core.models import Contest
 from django.contrib.auth import authenticate
 from judge_server.match_manager import SimpleMatchDB
 import re
@@ -47,10 +48,19 @@ class InitParser(ParserBase):
         if cmd:
             username = cmd.group('user')
             password = cmd.group('password')
-            contest = cmd.group('contest')
+            contest_id = cmd.group('contest')
 
             user = authenticate(username=username, password=password)
-            if user:
-                return "OK\n", ContestParser(contest, user)
-            else:
+
+            if not user:
                 return "FAIL INVALID_PASSWORD\n", self
+
+            try:
+                contest = Contest.objects.get(pk=contest_id)
+            except Contest.DoesNotExist:
+                return "FAIL INVALID_CONTEST\n", self
+
+            assert contest is not None
+            assert user is not None
+
+            return "OK\n", ContestParser(contest, user)

@@ -33,3 +33,10 @@ class ParserTest(TestCase):
             'user1', 'random_password'))
         self.assertRegexpMatches(reply, "FAIL INVALID_PASSWORD\n")
         self.assertEqual(parser, new_parser)
+
+    def test_parse_join_invalid_contest(self):
+        parser = InitParser()
+        reply, new_parser = parser.parse('JOIN {} AS "{}" PASSWORD "{}"'.format(1234567890,
+            'user1', 'passwd1'))
+        self.assertRegexpMatches(reply, "FAIL INVALID_CONTEST\n")
+        self.assertEqual(parser, new_parser)
