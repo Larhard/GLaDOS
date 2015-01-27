@@ -8,20 +8,20 @@ import re
 class ParserBase(object):
     def __init__(self, client):
         self.client = client
-        self.cmd_regex = re.compile('^cmd_')
+        self.command_regex = re.compile('^cmd_')
 
     def parse(self, what):
         """
         @param what: string to parse
         @return: (reply message, None or new parser)
         """
-        commands = [k for k in dir(self) if self.cmd_regex.match(k)]
+        commands = [k for k in dir(self) if self.command_regex.match(k)]
         for cmd_name in commands:
             cmd = getattr(self, cmd_name)
             res = cmd(what)
             if res is not None:
                 return res
-        return 'FAIL', self
+        return 'FAIL\n', self
 
 
 class MatchParser(ParserBase):
