@@ -47,6 +47,11 @@ class InitParser(ParserBase):
             reply += '# JOIN <contest_id> AS <urlencoded username> PASSWORD <urlencoded password>\n'
             return reply, self
 
+    def cmd_empty(self, what):
+        cmd = re.match('^\s*$', what, re.I)
+        if cmd:
+            return "", self
+
     def cmd_join(self, what):
         cmd = re.match('^\s*join\s+(?P<contest>\d+)\s+as\s+(?P<user>[^ ]*)\s+PASSWORD\s+(?P<password>[^ ]*)\s*$',
             what, re.I)
