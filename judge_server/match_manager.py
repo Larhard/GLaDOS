@@ -4,9 +4,10 @@ import re
 
 
 class MatchSession(object):
-    def __init__(self, user, conn):
+    def __init__(self, user, conn, match):
         self.user = user
         self.conn = conn
+        self.match = match
 
 
 class MatchThread(threading.Thread):
@@ -32,7 +33,7 @@ class Match(object):
 
     def register(self, user, conn):
         self.lobby.append(user)
-        return MatchSession(user=user, conn=conn)
+        return MatchSession(user=user, conn=conn, match=self)
 
     def is_ready(self):
         assert self.contest.players_count <= len(self.lobby)
@@ -60,5 +61,9 @@ class MatchManager(object):
 
             match_session = match.register(user=user, conn=conn)
             assert match_session is not None
+
+            if match.is_ready():
+                del self.matches[contest.id]
+            match.start()
 
             return match_session
