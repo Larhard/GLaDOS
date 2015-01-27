@@ -2,41 +2,47 @@ from judge_server.match_manager import SimpleMatchDB
 import re
 
 
-class ParserBase:
-    def __init__(self, client):
-        self.client = client
+class ParserBase(object):
+    def __init__(self):
+        pass
 
     def parse(self, what):
         """
         @param what: string to parse
-        @return: None or new parser
+        @return: (reply message, None or new parser)
         """
-        pass
+        cmd_regex = re.compile('^cmd_')
+        commands = [k for k in dir(self) if cmd_regex.match(k)]
+        for cmd_name in commands:
+            cmd = getattr(self, cmd_name)
+            res = cmd(what)
+            if res is not None:
+                return res
+        return 'FAIL', self
 
 
-class SimpleContestParser(ParserBase):
+class ContestParser(ParserBase):
     match_db = SimpleMatchDB()
 
-    def __init__(self, client, contest_id, user_id):
-        ParserBase.__init__(self, client)
+    def __init__(self, contest_id, user_id):
+        ParserBase.__init__(self)
         self.contest_id = contest_id
         self.user_id = user_id
-        self.match_session = self.match_db.get_match_session(self.contest_id,
-                                             self.user_id,
-                                             self.client.conn)
+        self.match_session = self.match_db.get_match_session(self.contest_id, self.user_id)
 
     def parse(self, what):
-        self.match_session.send(what)
+        return what, self
 
 
-class SimplePlayerParser(ParserBase):
-    def parse(self, what):
-        cmd = re.match('^\s*join\s+(?P<contest>\d+)\s+as\s+(?P<user>\d+)\s*$', what)
+class InitParser(ParserBase):
+    def cmd_help(self, what):
+        cmd = re.match('^\s*help\s*$', what, re.I)
         if cmd:
-            self.client.conn.send('ok\n')
-            return SimpleContestParser(self.client,
-                                       cmd.group('contest'),
-                                       cmd.group('user')
-                                       )
+            reply = ""
+            reply += "JOIN <contest_id> AS <user_id>\n"
+            return reply, self
 
-        self.client.conn.send('wtf\n')
+    def cmd_join(self, what):
+        cmd = re.match('^\s*join\s+(?P<contest>\d+)\s+as\s+(?P<user>\d+)\s*$', what, re.I)
+        if cmd:
+            return "OK\n", ContestParser(cmd.group('contest'), cmd.group('user'))

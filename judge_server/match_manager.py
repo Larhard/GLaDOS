@@ -93,11 +93,11 @@ class SimpleMatchDB:
     def __init__(self):
         self.contests = {}
 
-    def get_match_session(self, contest_id, user_id, conn):
+    def get_match_session(self, contest_id, user_id):
         if contest_id not in self.contests:
             self.contests[contest_id] = Contest(contest_id)
 
         contest = self.contests[contest_id]
 
-        session = contest.get_match_session(conn)
-        return session
+        # session = contest.get_match_session(user_id)
+        # return session

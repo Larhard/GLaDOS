@@ -2,7 +2,7 @@ import socket
 import threading
 import weakref
 
-from judge_server.parser import SimplePlayerParser
+from judge_server.parser import InitParser
 
 
 def split_socket(conn):
@@ -26,7 +26,7 @@ class ClientThread(threading.Thread):
         super(ClientThread, self).__init__()
         self.conn = conn
         self.addr = addr
-        self.parser = SimplePlayerParser(self)
+        self.parser = InitParser(self)
 
     def run(self):
         print "{} [{}] connected".format(*self.addr)
