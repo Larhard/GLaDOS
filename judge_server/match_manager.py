@@ -73,10 +73,11 @@ class Match(object):
             if recipient == 0:
                 for user in self.lobby:
                     user.conn.send(message)
-            elif recipient > 0:
-                self.lobby[recipient].conn.send(message)
+                return
 
-            return
+            if recipient > 0:
+                self.lobby[recipient].conn.send(message)
+                return
 
         self.log("judge: undefined message: {}".format(what))
 
