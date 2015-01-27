@@ -27,12 +27,23 @@ class ClientThread(threading.Thread):
         self.conn = conn
         self.addr = addr
         self.parser = InitParser(self)
+        self.send_mutex = threading.Lock()
+
+    def send(self, what):
+        """
+        thread safe send message
+        """
+        self.send_mutex.acquire()
+        self.conn.send(what)
+        self.send_mutex.release()
 
     def run(self):
         print "{} [{}] connected".format(*self.addr)
 
         for line in split_socket(self.conn):
-            self.parser = self.parser.parse(line) or self.parser
+            reply, parser = self.parser.parse(line)
+            self.send(reply)
+            self.parser = parser or self.parser
 
         self.conn.close()
         print "{} [{}] disconnected".format(*self.addr)
