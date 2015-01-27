@@ -1,14 +1,14 @@
 from urllib import unquote
 from core.models import Contest
 from django.contrib.auth import authenticate
-from judge_server.match_manager import SimpleMatchDB
 import re
 
 
 class ParserBase(object):
-    def __init__(self, client):
-        self.client = client
+    def __init__(self, *args, **kwargs):
         self.command_regex = re.compile('^cmd_')
+        self.args = args
+        self.kwargs = kwargs
 
     def parse(self, what):
         """
@@ -25,10 +25,7 @@ class ParserBase(object):
 
 
 class MatchParser(ParserBase):
-    def __init__(self, client, contest, user):
-        super(MatchParser, self).__init__(client)
-        self.contest_id = contest
-        self.user_id = user
+    pass
 
 
 class InitParser(ParserBase):
@@ -61,4 +58,4 @@ class InitParser(ParserBase):
             assert contest is not None
             assert user is not None
 
-            return "OK\n", MatchParser(self.client, contest, user)
+            return "OK\n", MatchParser(*self.args, contest=contest, user=user, **self.kwargs)

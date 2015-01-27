@@ -26,16 +26,15 @@ class ClientThread(threading.Thread):
         super(ClientThread, self).__init__()
         self.conn = conn
         self.addr = addr
-        self.parser = InitParser(self)
-        self.send_mutex = threading.Lock()
+        self.parser = InitParser(connection=self)
+        self.send_lock = threading.RLock()
 
     def send(self, what):
         """
         thread safe send message
         """
-        self.send_mutex.acquire()
-        self.conn.send(what)
-        self.send_mutex.release()
+        with self.send_lock:
+            self.conn.send(what)
 
     def run(self):
         print "{} [{}] connected".format(*self.addr)

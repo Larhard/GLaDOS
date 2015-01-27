@@ -69,35 +69,36 @@ class Match:
             print "'{}' to log".format(what)
 
 
-class Contest:
-    def __init__(self, contest_id):
-        self.contest_id = contest_id
-        self.lobbies = []
+class Match(object):
+    def __init__(self, contest):
+        self.contest = contest
+        self.lobby = []
 
-    def get_match_session(self, conn):
-        if len(self.lobbies) == 0:
-            self.lobbies.append(Match(self.contest_id))
+    def register(self, user):
+        self.lobby.append(user)
 
-        lobby = self.lobbies.pop(0)
-        session = lobby.register(conn)
+    def is_ready(self):
+        assert self.contest.players_count <= len(self.lobby)
+        return self.contest.players_count == len(self.lobby)
 
-        if lobby.is_full():
-            lobby.start()
-        else:
-            self.lobbies.append(lobby)
-
-        return session
+    def start(self):
+        pass
 
 
-class SimpleMatchDB:
+class MatchDB(object):
     def __init__(self):
-        self.contests = {}
+        self.matches_lock = threading.RLock
+        self.matches = {}
 
-    def get_match_session(self, contest_id, user_id):
-        if contest_id not in self.contests:
-            self.contests[contest_id] = Contest(contest_id)
+    def get_match_session(self, contest, user):
+        with self.matches_lock:
+            if contest.id not in self.matches:
+                self.matches[contest.id] = Match(contest)
 
-        contest = self.contests[contest_id]
+            match = self.matches[contest.id]
+            assert match is not None
 
-        # session = contest.get_match_session(user_id)
-        # return session
+            match_session = match.register(user)
+            assert match_session is not None
+
+            return match_session
