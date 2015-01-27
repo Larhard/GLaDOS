@@ -17,11 +17,19 @@ class ParserTest(TestCase):
         self.contest2.save()
 
         User = get_user_model()
-        self.user1 = User.objects.create_user("user1")
-        self.user2 = User.objects.create_user("user2")
+        self.user1 = User.objects.create_user("user1", password="passwd1")
+        self.user2 = User.objects.create_user("user2", password="passwd2")
 
     def test_parse_join(self):
         parser = InitParser()
-        reply, new_parser = parser.parse("JOIN {} AS {}".format(self.contest1.id, self.user1.id))
+        reply, new_parser = parser.parse('JOIN {} AS "{}" PASSWORD "{}"'.format(self.contest1.id,
+            'user1', 'passwd1'))
         self.assertRegexpMatches(reply, "OK\n")
         self.assertNotEqual(parser, new_parser)
+
+    def test_parse_join_invalid_passwd(self):
+        parser = InitParser()
+        reply, new_parser = parser.parse('JOIN {} AS "{}" PASSWORD "{}"'.format(self.contest1.id,
+            'user1', 'random_password'))
+        self.assertRegexpMatches(reply, "FAIL INVALID_PASSWORD\n")
+        self.assertEqual(parser, new_parser)

@@ -1,3 +1,4 @@
+from django.contrib.auth import authenticate
 from judge_server.match_manager import SimpleMatchDB
 import re
 
@@ -40,6 +41,16 @@ class InitParser(ParserBase):
             return reply, self
 
     def cmd_join(self, what):
-        cmd = re.match('^\s*join\s+(?P<contest>\d+)\s+as\s+(?P<user>\d+)\s*$', what, re.I)
+        cmd = re.match('^\s*join\s+(?P<contest>\d+)\s+as\s+"(?P<user>[^"]*)"\s+PASSWORD\s+"(?P<password>[^"]*)"\s*$',
+            what, re.I)
+
         if cmd:
-            return "OK\n", ContestParser(cmd.group('contest'), cmd.group('user'))
+            username = cmd.group('user')
+            password = cmd.group('password')
+            contest = cmd.group('contest')
+
+            user = authenticate(username=username, password=password)
+            if user:
+                return "OK\n", ContestParser(contest, user)
+            else:
+                return "FAIL INVALID_PASSWORD\n", self
