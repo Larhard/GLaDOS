@@ -7,10 +7,12 @@ import sys
 PROJECT_NAME = 'glados'
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', PROJECT_NAME+'.settings')
 
+import django
 from judge_server import Server
 
 
 def main():
+    django.setup()
     parser = argparse.ArgumentParser()
     parser.add_argument('--host', default='')
     parser.add_argument('--port', type=int, default=8895)
