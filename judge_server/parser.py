@@ -24,14 +24,11 @@ class ParserBase(object):
         return 'FAIL', self
 
 
-class ContestParser(ParserBase):
-    match_db = SimpleMatchDB()
-
-    def __init__(self, contest_id, user_id):
-        super(ContestParser, self).__init__()
-        self.contest_id = contest_id
-        self.user_id = user_id
-        self.match_session = self.match_db.get_match_session(self.contest_id, self.user_id)
+class MatchParser(ParserBase):
+    def __init__(self, contest, user):
+        super(MatchParser, self).__init__()
+        self.contest_id = contest
+        self.user_id = user
 
 
 class InitParser(ParserBase):
@@ -64,4 +61,4 @@ class InitParser(ParserBase):
             assert contest is not None
             assert user is not None
 
-            return "OK\n", ContestParser(contest, user)
+            return "OK\n", MatchParser(contest, user)
