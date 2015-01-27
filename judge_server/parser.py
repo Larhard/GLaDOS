@@ -1,3 +1,4 @@
+from urllib import unquote
 from core.models import Contest
 from django.contrib.auth import authenticate
 from judge_server.match_manager import SimpleMatchDB
@@ -37,17 +38,17 @@ class InitParser(ParserBase):
     def cmd_help(self, what):
         cmd = re.match('^\s*help\s*$', what, re.I)
         if cmd:
-            reply = ""
-            reply += 'JOIN <contest_id> AS "<username>" PASSWORD "<password>"\n'
+            reply = 'OK'
+            reply += '# JOIN <contest_id> AS <urlencoded username> PASSWORD <urlencoded password>\n'
             return reply, self
 
     def cmd_join(self, what):
-        cmd = re.match('^\s*join\s+(?P<contest>\d+)\s+as\s+"(?P<user>[^"]*)"\s+PASSWORD\s+"(?P<password>[^"]*)"\s*$',
+        cmd = re.match('^\s*join\s+(?P<contest>\d+)\s+as\s+(?P<user>[^ ]*)\s+PASSWORD\s+(?P<password>[^ ]*)\s*$',
             what, re.I)
 
         if cmd:
-            username = cmd.group('user')
-            password = cmd.group('password')
+            username = unquote(cmd.group('user'))
+            password = unquote(cmd.group('password'))
             contest_id = cmd.group('contest')
 
             user = authenticate(username=username, password=password)
