@@ -1,5 +1,6 @@
 import threading
 import time
+from judge_server.judge import JudgeWrapper
 import re
 
 
@@ -13,15 +14,6 @@ class MatchSession(object):
     def send(self, what):
         msg = '{} {}'.format(self.player_id, what)
         self.match.judge.send(msg)
-
-
-class JudgeWrapper(object):
-    def __init__(self, match):
-        self.match = match
-
-    def send(self, what):
-        # broadcast echo for now
-        self.match.send("0 judge received: {}\n".format(what))
 
 
 class MatchThread(threading.Thread):
