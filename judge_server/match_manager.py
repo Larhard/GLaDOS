@@ -1,11 +1,28 @@
 import threading
+import time
 import re
+
+
+class MatchThread(threading.Thread):
+    def __init__(self, match):
+        super(MatchThread, self).__init__()
+        self.match = match
+        self.running = True
+
+    def run(self):
+        while self.running:
+            print 'working'
+            time.sleep(1)
+
+    def stop(self):
+        self.running = False
 
 
 class Match(object):
     def __init__(self, contest):
         self.contest = contest
         self.lobby = []
+        self.match_thread = MatchThread(self)
 
     def register(self, user):
         self.lobby.append(user)
@@ -15,7 +32,10 @@ class Match(object):
         return self.contest.players_count == len(self.lobby)
 
     def start(self):
-        pass
+        self.match_thread.start()
+
+    def close(self):
+        self.match_thread.stop()
 
 
 class MatchManager(object):
@@ -23,7 +43,7 @@ class MatchManager(object):
         self.matches_lock = threading.RLock
         self.matches = {}
 
-    def get_match_session(self, contest, user):
+    def get_session(self, contest, user):
         with self.matches_lock:
             if contest.id not in self.matches:
                 self.matches[contest.id] = Match(contest)
