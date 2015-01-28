@@ -45,15 +45,15 @@ class Match(object):
 
     def send(self, what):
         # ignore comments
-        match = re.match('^#', what)
-        if match is not None:
+        rmatch = re.match('^#', what)
+        if rmatch is not None:
             return
 
         # message
-        match = re.match('^(?P<recipient>-?\d+)\s?(?P<message>.*)$', what, re.S)
-        if match is not None:
-            recipient = int(match.group('recipient'))
-            message = match.group('message')
+        rmatch = re.match('^(?P<recipient>-?\d+)\s?(?P<message>.*)$', what, re.S)
+        if rmatch is not None:
+            recipient = int(rmatch.group('recipient'))
+            message = rmatch.group('message')
 
             # broadcast to all players
             if recipient == 0:
