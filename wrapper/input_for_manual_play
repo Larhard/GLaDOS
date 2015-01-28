@@ -1,0 +1,11 @@
+#!/bin/env python2 
+import sys
+
+
+my_input = open("./my_input", "w")
+while True:
+    line = sys.stdin.readline()
+    my_input.write(line)
+    my_input.flush()
+
+

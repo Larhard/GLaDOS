@@ -1,0 +1,27 @@
+
+Requirements:
+python 2 (+sockets)
+
+How to use:
+./wrapper /path/to/exec judge_ip_address contest_id username password
+
+
+For example running test_exec.sh program connected to 127.1 (localhost) to
+contest of id 1 with username a and password a, would be:
+./wrapper ./test_exec.sh 127.1 1 a a
+
+Wrapper ends execution when it discovers that the programs output pipe is
+broken (because it could not change the game state anymore anyways, so why
+bother?), this means that the program will execute infinitelly if it does not
+end or is not interupted.
+
+Putting data manually to the wrapper.
+
+STILL NOT WORKING, but is supposed to work be used like this:
+./create_fifo
+./wrapper ./manual_input address contest_id username password
+./input_for_manual_play 
+    and now You would type input, but it seems that the fifo is not flushed
+    properely or something
+
+

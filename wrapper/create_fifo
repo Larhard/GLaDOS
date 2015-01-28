@@ -1,0 +1,6 @@
+#!/bin/env python2 
+import os
+
+os.mkfifo("./my_input")
+
+
