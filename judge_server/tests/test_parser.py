@@ -31,7 +31,6 @@ class ParserTest(TestCase):
         self.contest2 = Contest()
         self.contest2.name = "test_contest_2"
         self.contest2.players_count = 2
-        self.contest2.default_judge = self.judge
         self.contest2.save()
 
         User = get_user_model()
@@ -69,3 +68,10 @@ class ParserTest(TestCase):
             quote('user2'), quote('hasło mocne')))
         self.assertRegexpMatches(reply, "OK\n")
         self.assertNotEqual(parser, new_parser)
+
+    def test_parse_join_contest_without_default_judge(self):
+        parser = InitParser(connection=self.client_thread, match_manager=self.match_manager)
+        reply, new_parser = parser.parse('JOIN {} AS {} PASSWORD {}'.format(self.contest2.id,
+            quote('user1'), quote('passwd1')))
+        self.assertRegexpMatches(reply, "FAIL INVALID_CONTEST\n")
+        self.assertEqual(parser, new_parser)

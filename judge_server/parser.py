@@ -72,6 +72,9 @@ class InitParser(ParserBase):
             except Contest.DoesNotExist:
                 return "FAIL INVALID_CONTEST\n", self
 
+            if contest.default_judge is None:
+                return "FAIL INVALID_CONTEST\n", self
+
             assert contest is not None
             assert user is not None
 
