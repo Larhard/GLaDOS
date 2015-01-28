@@ -1,14 +1,14 @@
 from urllib import unquote
 from core.models import Contest
 from django.contrib.auth import authenticate
-from judge_server.match_manager import SimpleMatchDB
 import re
 
 
 class ParserBase(object):
-    def __init__(self, client):
-        self.client = client
+    def __init__(self, *args, **kwargs):
         self.command_regex = re.compile('^cmd_')
+        self.args = args
+        self.kwargs = kwargs
 
     def parse(self, what):
         """
@@ -25,10 +25,19 @@ class ParserBase(object):
 
 
 class MatchParser(ParserBase):
-    def __init__(self, client, contest, user):
-        super(MatchParser, self).__init__(client)
-        self.contest_id = contest
-        self.user_id = user
+    def __init__(self, *args, **kwargs):
+        super(MatchParser, self).__init__(*args, **kwargs)
+
+        self.match_manager = self.kwargs['match_manager']
+        self.conn = self.kwargs['connection']
+        self.user = self.kwargs['user']
+        self.contest = self.kwargs['contest']
+
+        self.match_session = self.match_manager.get_session(user=self.user, contest=self.contest, conn=self.conn)
+
+    def cmd_all(self, what):
+        self.match_session.send(what)
+        return '', self
 
 
 class InitParser(ParserBase):
@@ -38,6 +47,11 @@ class InitParser(ParserBase):
             reply = 'OK\n'
             reply += '# JOIN <contest_id> AS <urlencoded username> PASSWORD <urlencoded password>\n'
             return reply, self
+
+    def cmd_empty(self, what):
+        cmd = re.match('^\s*$', what, re.I)
+        if cmd:
+            return "", self
 
     def cmd_join(self, what):
         cmd = re.match('^\s*join\s+(?P<contest>\d+)\s+as\s+(?P<user>[^ ]*)\s+PASSWORD\s+(?P<password>[^ ]*)\s*$',
@@ -58,7 +72,10 @@ class InitParser(ParserBase):
             except Contest.DoesNotExist:
                 return "FAIL INVALID_CONTEST\n", self
 
+            if contest.default_judge is None:
+                return "FAIL INVALID_CONTEST\n", self
+
             assert contest is not None
             assert user is not None
 
-            return "OK\n", MatchParser(self.client, contest, user)
+            return "OK\n", MatchParser(*self.args, contest=contest, user=user, **self.kwargs)

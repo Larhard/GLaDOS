@@ -1,9 +1,10 @@
 # coding=utf-8
 
 from urllib import quote
-from core.models import Contest
+from core.models import Contest, Judge
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from judge_server.match_manager import MatchManager
 from judge_server.parser import InitParser
 
 
@@ -17,9 +18,14 @@ class FakeClient():
 
 class ParserTest(TestCase):
     def setUp(self):
+        self.judge = Judge()
+        self.judge.path = '/example/judge'
+        self.judge.save()
+
         self.contest1 = Contest()
         self.contest1.name = "test_contest_1"
         self.contest1.players_count = 1
+        self.contest1.default_judge = self.judge
         self.contest1.save()
 
         self.contest2 = Contest()
@@ -33,30 +39,39 @@ class ParserTest(TestCase):
 
         self.client_thread = FakeClient()
 
+        self.match_manager = MatchManager()
+
     def test_parse_join(self):
-        parser = InitParser(self.client_thread)
+        parser = InitParser(connection=self.client_thread, match_manager=self.match_manager)
         reply, new_parser = parser.parse('JOIN {} AS {} PASSWORD {}'.format(self.contest1.id,
             quote('user1'), quote('passwd1')))
         self.assertRegexpMatches(reply, "OK\n")
         self.assertNotEqual(parser, new_parser)
 
     def test_parse_join_invalid_passwd(self):
-        parser = InitParser(self.client_thread)
+        parser = InitParser(connection=self.client_thread, match_manager=self.match_manager)
         reply, new_parser = parser.parse('JOIN {} AS {} PASSWORD {}'.format(self.contest1.id,
             quote('user1'), quote('random_password')))
         self.assertRegexpMatches(reply, "FAIL INVALID_PASSWORD\n")
         self.assertEqual(parser, new_parser)
 
     def test_parse_join_invalid_contest(self):
-        parser = InitParser(self.client_thread)
+        parser = InitParser(connection=self.client_thread, match_manager=self.match_manager)
         reply, new_parser = parser.parse('JOIN {} AS {} PASSWORD {}'.format(1234567890,
             quote('user1'), quote('passwd1')))
         self.assertRegexpMatches(reply, "FAIL INVALID_CONTEST\n")
         self.assertEqual(parser, new_parser)
 
     def test_parse_join_ugly_password(self):
-        parser = InitParser(self.client_thread)
+        parser = InitParser(connection=self.client_thread, match_manager=self.match_manager)
         reply, new_parser = parser.parse('JOIN {} AS {} PASSWORD {}'.format(self.contest1.id,
             quote('user2'), quote('hasło mocne')))
         self.assertRegexpMatches(reply, "OK\n")
         self.assertNotEqual(parser, new_parser)
+
+    def test_parse_join_contest_without_default_judge(self):
+        parser = InitParser(connection=self.client_thread, match_manager=self.match_manager)
+        reply, new_parser = parser.parse('JOIN {} AS {} PASSWORD {}'.format(self.contest2.id,
+            quote('user1'), quote('passwd1')))
+        self.assertRegexpMatches(reply, "FAIL INVALID_CONTEST\n")
+        self.assertEqual(parser, new_parser)
