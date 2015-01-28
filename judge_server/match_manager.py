@@ -17,21 +17,6 @@ class MatchSession(object):
         self.match.judge.send(msg)
 
 
-class MatchThread(threading.Thread):
-    def __init__(self, match):
-        super(MatchThread, self).__init__()
-        self.match = match
-        self.running = True
-
-    def run(self):
-        while self.running:
-            print 'working'
-            time.sleep(1)
-
-    def stop(self):
-        self.running = False
-
-
 class Match(object):
     class User(object):
         def __init__(self, user, conn):
