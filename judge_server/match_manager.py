@@ -1,103 +1,119 @@
 import threading
+import time
+import core.models
+from judge_server.judge import JudgeWrapper
 import re
+
+
+class MatchSession(object):
+    def __init__(self, user, conn, match, player_id):
+        self.user = user
+        self.conn = conn
+        self.match = match
+        self.player_id = player_id
+
+    def send(self, what):
+        msg = '{} {}'.format(self.player_id, what)
+        self.match.judge.send(msg)
 
 
 class MatchThread(threading.Thread):
     def __init__(self, match):
         super(MatchThread, self).__init__()
         self.match = match
+        self.running = True
 
     def run(self):
-        self.match.judge.send("-1\tstart")
+        while self.running:
+            print 'working'
+            time.sleep(1)
+
+    def stop(self):
+        self.running = False
 
 
-class MatchSession:
-    def __init__(self, match, session_id):
-        self.match = match
-        self.session_id = session_id
+class Match(object):
+    class User(object):
+        def __init__(self, user, conn):
+            self.user = user
+            self.conn = conn
+
+    def __init__(self, contest):
+        self.contest = contest
+        self.lobby = []
+        self.judge = JudgeWrapper(match=self)
+
+        self.match = core.models.Match()
+        self.match.contest = self.contest
+        self.match.judge = self.contest.default_judge
+        self.match.save()
+
+        self.log("match: init lobby")
+
+    def register(self, user, conn):
+        self.lobby.append(Match.User(user, conn))
+        return MatchSession(user=user, conn=conn, match=self, player_id=len(self.lobby))
+
+    def is_ready(self):
+        assert self.contest.players_count >= len(self.lobby)
+        return self.contest.players_count == len(self.lobby)
 
     def send(self, what):
-        self.match.judge.send('{}\t{}'.format(self.session_id, what))
+        # ignore comments
+        match = re.match('^#', what)
+        if match is not None:
+            return
 
+        # message
+        match = re.match('^(?P<recipient>-?\d+)\s?(?P<message>.*)$', what, re.S)
+        if match is not None:
+            recipient = int(match.group('recipient'))
+            message = match.group('message')
 
-class TestJudge:
-    def __init__(self, match):
-        self.match = match
+            if recipient == 0:
+                for user in self.lobby:
+                    user.conn.send(message)
+                return
 
-    def send(self, what):
-        print what
-        self.match.send("0 received {}".format(what))
+            if recipient > 0:
+                self.lobby[recipient].conn.send(message)
+                return
 
-
-class Match:
-    def __init__(self, contest_id):
-        self.contest_id = contest_id
-        self.players = []
-        self.max_players = 2
-        self.judge = TestJudge(self)
-
-    def register(self, conn):
-        self.players.append(conn)
-        session_id = len(self.players)
-        return MatchSession(self, session_id)
+        self.log("judge: undefined message: {}".format(what))
 
     def start(self):
-        match_thread = MatchThread(self)
-        match_thread.setDaemon(True)
-        match_thread.start()
+        self.log("match: start")
+        self.judge.send('-1 START')
 
-    def is_full(self):
-        return len(self.players) == self.max_players
+    def log(self, what, priority=0):
+        log = core.models.MatchLog()
+        log.match = self.match
+        log.body = what
+        log.priority = priority
+        log.save()
 
-    def send(self, what):
-        to = None
-        message = None
-
-        msg = re.match('^\s*(?P<to>\d+)\s(?P<message>.*)$', what)
-        if msg:
-            to = int(msg.group('to'))
-            message = msg.group('message')
-            message = re.sub('\n', '\\n', message)
-            message += '\n'
-
-        if 1 <= to <= len(self.players):
-            self.players[to-1].send(message)
-        elif to == 0:
-            for player in self.players:
-                player.send(message)
-        else:
-            print "'{}' to log".format(what)
+    def close(self):
+        pass
 
 
-class Contest:
-    def __init__(self, contest_id):
-        self.contest_id = contest_id
-        self.lobbies = []
-
-    def get_match_session(self, conn):
-        if len(self.lobbies) == 0:
-            self.lobbies.append(Match(self.contest_id))
-
-        lobby = self.lobbies.pop(0)
-        session = lobby.register(conn)
-
-        if lobby.is_full():
-            lobby.start()
-        else:
-            self.lobbies.append(lobby)
-
-        return session
-
-
-class SimpleMatchDB:
+class MatchManager(object):
     def __init__(self):
-        self.contests = {}
+        self.matches_lock = threading.RLock()
+        self.matches = {}
 
-    def get_match_session(self, contest_id, user_id, conn):
-        if contest_id not in self.contests:
-            self.contests[contest_id] = Contest(contest_id)
+    def get_session(self, contest, user, conn):
+        with self.matches_lock:
+            if contest.id not in self.matches:
+                self.matches[contest.id] = Match(contest)
 
-        contest = self.contests[contest_id]
+            match = self.matches[contest.id]
+            assert match is not None
 
-        session = contest.get_match_session(conn)
-        return session
+            match_session = match.register(user=user, conn=conn)
+            assert match_session is not None
+
+            if match.is_ready():
+                del self.matches[contest.id]
+                match.start()
+
+            return match_session

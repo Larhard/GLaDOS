@@ -6,6 +6,7 @@ class ContestAdmin(admin.ModelAdmin):
     fields = [
         'name',
         'description',
+        'players_count',
         'start',
         'end',
         'default_judge',
@@ -15,7 +16,6 @@ class ContestAdmin(admin.ModelAdmin):
 class JudgeAdmin(admin.ModelAdmin):
     fields = [
         'path',
-        'contest',
     ]
 
 

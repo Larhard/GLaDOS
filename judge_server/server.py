@@ -1,8 +1,9 @@
 import socket
 import threading
 import weakref
+from judge_server.match_manager import MatchManager
 
-from judge_server.parser import SimplePlayerParser
+from judge_server.parser import InitParser
 
 
 def split_socket(conn):
@@ -22,17 +23,28 @@ def split_socket(conn):
 
 
 class ClientThread(threading.Thread):
-    def __init__(self, conn, addr):
+    def __init__(self, conn, addr, server):
         super(ClientThread, self).__init__()
+        self.server = server
         self.conn = conn
         self.addr = addr
-        self.parser = SimplePlayerParser(self)
+        self.parser = InitParser(connection=self, match_manager=self.server.match_manager)
+        self.send_lock = threading.RLock()
+
+    def send(self, what):
+        """
+        thread safe send message
+        """
+        with self.send_lock:
+            self.conn.send(what)
 
     def run(self):
         print "{} [{}] connected".format(*self.addr)
 
         for line in split_socket(self.conn):
-            self.parser = self.parser.parse(line) or self.parser
+            reply, parser = self.parser.parse(line)
+            self.send(reply)
+            self.parser = parser or self.parser
 
         self.conn.close()
         print "{} [{}] disconnected".format(*self.addr)
@@ -46,9 +58,12 @@ class ServerThread(threading.Thread):
         self.running = False
 
         self.sock = socket.socket()
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.server.host, self.server.port))
 
         self.connections = weakref.WeakSet()
+
+        self.match_manager = MatchManager()
 
     def run(self):
         self.running = True
@@ -56,7 +71,7 @@ class ServerThread(threading.Thread):
             self.sock.listen(1)
             while self.running:
                 conn, addr = self.sock.accept()
-                client_thread = ClientThread(conn, addr)
+                client_thread = ClientThread(conn, addr, self)
                 client_thread.setDaemon(True)
                 client_thread.start()
                 self.connections.add(conn)
