@@ -55,13 +55,30 @@ class Match(object):
             recipient = int(match.group('recipient'))
             message = match.group('message')
 
+            # broadcast to all players
             if recipient == 0:
                 for user in self.lobby:
                     user.conn.send(message)
                 return
 
-            if recipient > 0:
-                self.lobby[recipient].conn.send(message)
+            # send to particular player
+            if len(self.lobby) >= recipient > 0:
+                self.lobby[recipient-1].conn.send(message)
+                return
+
+            # message to match manager
+            if recipient == -1:
+                self.execute(message)
+                return
+
+            # message to logs
+            if recipient <= -2:
+                priority = 0
+                rmatch = re.match('^-?\d+\.(?P<priority>-?\d+)\s?(?P<message>.*)$', what, re.S)
+                if rmatch:
+                    priority = rmatch.group('priority')
+                    message = rmatch.group('message')
+                self.log(message, priority=priority)
                 return
 
         self.log("judge: undefined message: {}".format(what))
@@ -78,6 +95,9 @@ class Match(object):
         log.save()
 
     def close(self):
+        pass
+
+    def execute(self, command):
         pass
 
 
