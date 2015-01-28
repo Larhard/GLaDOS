@@ -15,7 +15,7 @@ def main():
     parser.add_argument('contest')
     parser.add_argument('account', metavar='username@host')
     parser.add_argument('--port', '-p', default=DEFAULT_CAROLINE_PORT,
-        help='default port is {}'.format(DEFAULT_CAROLINE_PORT))
+        help='default port is {}'.format(DEFAULT_CAROLINE_PORT), type=int)
     args = parser.parse_args(sys.argv[1:])
     rmatch = re.match('^(?P<username>.*)@(?P<host>[^@]*)', args.account)
     if not rmatch:
@@ -27,7 +27,7 @@ def main():
     # run wrapper
     args.password = getpass.getpass('password: ')
     A = Wrapper(program_name=args.program, address=args.host, contest_id=args.contest,
-        username=args.username, password=args.password)
+        username=args.username, password=args.password, port=args.port)
 
 if __name__ == '__main__':
     main()

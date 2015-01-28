@@ -76,7 +76,7 @@ class ProgramHolder:
         self.player.kill()
 
 class Wrapper:
-    def __init__(self, program_name, address, contest_id, username, password):
+    def __init__(self, program_name, address, contest_id, username, password, port):
         self.program_name = program_name
         self.address = address
         self.contest_id = contest_id
@@ -86,7 +86,7 @@ class Wrapper:
         self.program = ProgramHolder(self.program_name)
 
         self.socket = socket.socket()
-        self.socket.connect((self.address, PORT))
+        self.socket.connect((self.address, port))
 
         self.socket.send("join "+contest_id+" as "+username+" password "+password+"\n")
         tmp = self.socket.recv(1024)
@@ -106,7 +106,7 @@ class Wrapper:
 
 
 if __name__ == '__main__':
-    A = Wrapper(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
+    A = Wrapper(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], port=PORT)
 
 
 
