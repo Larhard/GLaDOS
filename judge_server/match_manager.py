@@ -17,21 +17,6 @@ class MatchSession(object):
         self.match.judge.send(msg)
 
 
-class MatchThread(threading.Thread):
-    def __init__(self, match):
-        super(MatchThread, self).__init__()
-        self.match = match
-        self.running = True
-
-    def run(self):
-        while self.running:
-            print 'working'
-            time.sleep(1)
-
-    def stop(self):
-        self.running = False
-
-
 class Match(object):
     class User(object):
         def __init__(self, user, conn):
@@ -60,23 +45,40 @@ class Match(object):
 
     def send(self, what):
         # ignore comments
-        match = re.match('^#', what)
-        if match is not None:
+        rmatch = re.match('^#', what)
+        if rmatch is not None:
             return
 
         # message
-        match = re.match('^(?P<recipient>-?\d+)\s?(?P<message>.*)$', what, re.S)
-        if match is not None:
-            recipient = int(match.group('recipient'))
-            message = match.group('message')
+        rmatch = re.match('^(?P<recipient>-?\d+)\s?(?P<message>.*)$', what, re.S)
+        if rmatch is not None:
+            recipient = int(rmatch.group('recipient'))
+            message = rmatch.group('message')
 
+            # broadcast to all players
             if recipient == 0:
                 for user in self.lobby:
                     user.conn.send(message)
                 return
 
-            if recipient > 0:
-                self.lobby[recipient].conn.send(message)
+            # send to particular player
+            if len(self.lobby) >= recipient > 0:
+                self.lobby[recipient-1].conn.send(message)
+                return
+
+            # message to match manager
+            if recipient == -1:
+                self.execute(message)
+                return
+
+            # message to logs
+            if recipient <= -2:
+                priority = 0
+                rmatch = re.match('^-?\d+\.(?P<priority>-?\d+)\s?(?P<message>.*)$', what, re.S)
+                if rmatch:
+                    priority = rmatch.group('priority')
+                    message = rmatch.group('message')
+                self.log(message, priority=priority)
                 return
 
         self.log("judge: undefined message: {}".format(what))
@@ -93,6 +95,9 @@ class Match(object):
         log.save()
 
     def close(self):
+        pass
+
+    def execute(self, command):
         pass
 
 

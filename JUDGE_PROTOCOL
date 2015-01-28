@@ -1,0 +1,20 @@
+judge will receive messages in format:
+
+  (?P<sender>-?\d+)\s(?P<message>.*)
+
+sender adresses:
+
+  [1..players_count]  - player
+  -1                  - match manager
+
+and should send message in format
+
+  (?P<recipient>-?\d+)\s(?P<message>.*)
+
+where recipient is:
+
+  0                   - all players
+  [1..players_count]  - player
+  -1                  - match manager
+  -2                  - logger with default priority 0
+  -2.<priority>       - logger with given integer priority

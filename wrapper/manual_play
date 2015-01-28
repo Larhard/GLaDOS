@@ -1,0 +1,38 @@
+#!/bin/env python2
+
+import sys
+from threading  import Thread
+
+def my_print(some_str):
+    sys.stderr.write(some_str+"\n")
+
+def print_received():
+    while True:
+        line = sys.stdin.readline()
+        my_print("received from host: " + line + "\n")
+
+if __name__ == '__main__':
+    my_input = open("./my_input", "r")
+
+    stdin_to_stdout = Thread(target=print_received)
+    stdin_to_stdout.daemon = True
+    stdin_to_stdout.start()
+
+    #while True:
+    #    line = my_input.readline()
+    #    my_print("received localy: " + line + "\n")
+    #    print line
+
+    for line in my_input:
+        my_print("received localy: " + line + "\n")
+        print line
+
+
+    my_input.close()
+
+    
+    
+
+
+
+
