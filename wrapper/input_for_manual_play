@@ -2,10 +2,10 @@
 import sys
 
 
-my_input = open("./my_input", "w")
 while True:
+    my_input = open("./my_input", "w", 0)
     line = sys.stdin.readline()
     my_input.write(line)
-    my_input.flush()
+    my_input.close()
 
 
