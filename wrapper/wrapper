@@ -54,8 +54,7 @@ class ProgramHolder:
     """Class for wrapping the external process"""
     def __init__(self, program_name):
         self.program_name = program_name
-        self.player = Popen([program_name], stdout=PIPE, stdin=PIPE, 
-                bufsize=1)
+        self.player = Popen([program_name], stdout=PIPE, stdin=PIPE)
         self.player.daemon = False
             #stderr=PIPE  - add this after end of debugging
         self.in_queue = Queue(maxsize = QUEUE_SIZE)
