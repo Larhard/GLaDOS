@@ -19,7 +19,7 @@ def enqueue_output(myout, queue):
         myout.flush()
     myout.close()
 
-class ProgramHolder:
+class JudgeWrapper:
     """Class for wrapping the external process"""
     def __init__(self, program_name):
         self.program_name = program_name
