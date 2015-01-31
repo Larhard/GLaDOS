@@ -8,8 +8,8 @@
 {% block content %}
     <p> {{contest.name}} contest </p> <br>
     Results:
-    <table>
-        <tr>
+    <table class="std">
+        <tr class="head">
             <th>id</th>
             <th>Name</th>
             <th>wins</th>
@@ -17,7 +17,7 @@
             <th>ties</th>
         </tr>
         {% for prog in programs %}
-            <tr>
+            <tr class="{% cycle 'row1' 'row2' %}">
                 <td>{{ prog.id }}</td>
                 <td>{{ prog.name }}</td>
                 <td>{{ prog.wins }}</td>
