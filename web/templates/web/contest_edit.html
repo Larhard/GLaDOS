@@ -6,7 +6,8 @@
 {% endblock %}
 
 {% block content %}
-    <form action="{% url 'web:contest_edit' contest.id %}">
+    <form action="{% url 'web:contest_edit' contest.id %}" method="post">
+        {% csrf_token %}
         <table class="std horizontal">
             <tr>
                 <th><label for="contest_edit_name">Contest name:</label></th>
@@ -21,9 +22,9 @@
             <tr>
                 <th><label for="contest_edit_default_judge">Contest default_judge:</label></th>
                 <td><select id="contest_edit_default_judge" name="default_judge">
-                    <option {% if not contest.default_judge %}selected{% endif %}>--------</option>
+                    <option value="None" {% if not contest.default_judge %}selected{% endif %}>--------</option>
                     {% for judge in judges %}
-                        <option {% if contest.default_judge == judge %}selected{% endif %}>{{ judge }}</option>
+                        <option value="{{ judge.id }}" {% if contest.default_judge == judge %}selected{% endif %}>{{ judge }}</option>
                     {% endfor %}
                 </select></td>
             </tr>

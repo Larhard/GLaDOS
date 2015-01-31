@@ -94,6 +94,14 @@ def logout_view(request):
 
 @staff_member_required
 def contest_edit(request, contest_id):
+    if 'save' in request.POST:
+        contest = Contest.objects.get(id=contest_id)
+        contest.name = request.POST['name']
+        contest.description = request.POST['description']
+        contest.players_count = int(request.POST['players_count'])
+        contest.default_judge_id = None if request.POST['default_judge'] == 'None' \
+            else int(request.POST['default_judge'])
+        contest.save()
     contest = Contest.objects.get(id=contest_id)
     judges = Judge.objects.all()
     return render(request, 'web/contest_edit.html', {
