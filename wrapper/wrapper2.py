@@ -26,7 +26,7 @@ def main():
     args.host = rmatch.group('host')
 
     # run wrapper
-    if not argparse:
+    if not args.password:
         args.password = getpass.getpass('password: ')
 
     A = Wrapper(program_name=args.program, address=args.host, contest_id=args.contest,
