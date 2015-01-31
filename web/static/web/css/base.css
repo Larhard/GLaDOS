@@ -31,3 +31,7 @@ div.login_form ul {
     margin: 0;
     padding: 0;
 }
+
+div.login_form ul li {
+    margin: 10px;
+}
