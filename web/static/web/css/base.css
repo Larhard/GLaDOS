@@ -65,7 +65,17 @@ table.std td
     background-color: #1e545b;
 }
 
+.row1:hover
+{
+    background-color: #1e7583;
+}
+
 .row2
 {
     background-color: #08365b;
+}
+
+.row2:hover
+{
+    background-color: #21288d;
 }
