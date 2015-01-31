@@ -18,3 +18,15 @@ a {
 a:hover {
     color: #ffffff;
 }
+
+div.login_form {
+    text-align: right;
+    display: table;
+    margin: auto;
+}
+
+div.login_form ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
