@@ -35,5 +35,9 @@
         </li>
     </ul>
 
+    {% if user.is_staff %}
+        <a href="{% url 'web:contest_edit' contest_info.id %}">edit</a>
+    {% endif %}
+
 {% endblock %}
 

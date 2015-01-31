@@ -54,12 +54,14 @@ ul.std
 table.std
 {
     border-collapse: collapse;
+    width: 100%;
 }
 
 table.std th,
 table.std td
 {
     padding: 2px 10px;
+    width: 0;
 }
 
 .head
@@ -95,4 +97,14 @@ table.std td
 .indent
 {
     padding-left: 30px;
+}
+
+table.horizontal th
+{
+    text-align: right;
+}
+
+textarea.std
+{
+    width: 400px;
 }

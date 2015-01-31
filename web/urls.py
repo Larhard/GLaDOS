@@ -8,6 +8,7 @@ urlpatterns = patterns('web.views',
                        url(r'^contest/create/$', 'contest_create', name='contest_create'),
                        url(r'^contest/(?P<contest_id>\d+)/$', 'contest_details', name='contest_details'),
                        url(r'^contest/(?P<contest_id>\d+)/results$', 'contest_results', name='contest_results'),
+                       url(r'^contest/(?P<contest_id>\d+)/edit$', 'contest_edit', name='contest_edit'),
                        url(r'^login/$', 'login_view', name='login'),
                        url(r'^logout/$', 'logout_view', name='logout'),
                        )

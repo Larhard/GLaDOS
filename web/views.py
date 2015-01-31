@@ -1,3 +1,4 @@
+from django.shortcuts import render_to_response
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
@@ -5,7 +6,7 @@ from django.core.urlresolvers import NoReverseMatch
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
 
-from core.models import Contest
+from core.models import Contest, Judge
 from core.models import Program
 
 
@@ -89,3 +90,13 @@ def logout_view(request):
         return redirect(redirect_url)
     except NoReverseMatch:
         return redirect('/')
+
+
+@staff_member_required
+def contest_edit(request, contest_id):
+    contest = Contest.objects.get(id=contest_id)
+    judges = Judge.objects.all()
+    return render(request, 'web/contest_edit.html', {
+        'contest': contest,
+        'judges': judges,
+    })

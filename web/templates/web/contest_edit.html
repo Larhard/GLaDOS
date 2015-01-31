@@ -1,0 +1,38 @@
+{% extends 'web/site.html' %}
+
+{% block title %}
+    {{ block.super }}
+    - Contests Edit
+{% endblock %}
+
+{% block content %}
+    <form action="{% url 'web:contest_edit' contest.id %}">
+        <table class="std horizontal">
+            <tr>
+                <th><label for="contest_edit_name">Contest name:</label></th>
+                <td><input id="contest_edit_name" type="text" name="name" value="{{ contest.name }}"/></td>
+            </tr>
+
+            <tr>
+                <th><label for="contest_edit_description">Contest description:</label></th>
+                <td><textarea id="contest_edit_description" class="std" name="description">{{ contest.description }}</textarea></td>
+            </tr>
+
+            <tr>
+                <th><label for="contest_edit_default_judge">Contest default_judge:</label></th>
+                <td><select id="contest_edit_default_judge" name="default_judge">
+                    <option {% if not contest.default_judge %}selected{% endif %}>--------</option>
+                    {% for judge in judges %}
+                        <option {% if contest.default_judge == judge %}selected{% endif %}>{{ judge }}</option>
+                    {% endfor %}
+                </select></td>
+            </tr>
+
+            <tr>
+                <th><label for="contest_edit_players_count">Contest players_count:</label></th>
+                <td><input id="contest_edit_players_count" type="number" name="players_count" value="{{ contest.players_count }}"></td>
+            </tr>
+        </table>
+        <input type="submit" name="save" value="save">
+    </form>
+{% endblock %}
