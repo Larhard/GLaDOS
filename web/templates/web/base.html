@@ -1,3 +1,5 @@
+{% load staticfiles %}
+
 <!DOCTYPE html>
 <html>
 <head lang="en">
@@ -5,6 +7,9 @@
     <title>{% block title %}{% endblock %}</title>{# TODO read title from database #}
     {% block css %}
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}web/css/base.css">
+    {% endblock %}
+    {% block scripts %}
+        <script type="application/javascript" src="{% static 'js/jquery.js' %}"></script>
     {% endblock %}
 </head>
 <body>
