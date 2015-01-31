@@ -14,7 +14,7 @@
             <th>Description</th>
         </tr>
         {% for contest in contests %}
-            <tr class="{% cycle 'row1' 'row2' %}">
+            <tr class="{% cycle 'row1' 'row2' %} href" data-href="{% url 'web:contest_details' contest.id %}">
                 <td>{{ contest.id }}</td>
                 <td><a href="{% url 'web:contest_details' contest.id %}">{{ contest.name }}</a></td>
                 <td>{{ contest.description }}</td>
