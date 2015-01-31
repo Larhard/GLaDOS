@@ -28,6 +28,7 @@ def split_socket(conn):
 
 def enqueue_input(myin, queue):
     for line in iter(myin.readline, b''):
+        print line
         queue.put(line.decode())
     myin.close()
 
@@ -47,15 +48,13 @@ def send_to_remote(remote_socket, queue):
     while True:
         temp = queue.get()
         remote_socket.send(temp)
-        remote_socket.flush()
     remote_socket.close()
 
 class ProgramHolder:
     """Class for wrapping the external process"""
     def __init__(self, program_name):
         self.program_name = program_name
-        self.player = Popen([program_name], stdout=PIPE, stdin=PIPE, 
-                bufsize=1)
+        self.player = Popen([program_name], stdout=PIPE, stdin=PIPE)
         self.player.daemon = False
             #stderr=PIPE  - add this after end of debugging
         self.in_queue = Queue(maxsize = QUEUE_SIZE)
@@ -99,10 +98,18 @@ class Wrapper:
         self.remote_in = Thread(target=receive_from_remote,
                             args=(self.socket, self.program.out_queue))
         self.remote_in.daemon = True
+        self.remote_in.start()
 
         self.remote_out = Thread(target=send_to_remote,
                             args=(self.socket, self.program.in_queue))
         self.remote_out.daemon = True
+        self.remote_out.start()
+
+        self.remote_in.join()
+        self.remote_out.join()
+
+        self.program.in_thread.join()
+        self.program.out_thread.join()
 
 
 if __name__ == '__main__':

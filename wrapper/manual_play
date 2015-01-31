@@ -9,7 +9,7 @@ def my_print(some_str):
 def print_received():
     while True:
         line = sys.stdin.readline()
-        my_print("received from host: " + line + "\n")
+        my_print("received from host: " + line)
 
 if __name__ == '__main__':
     my_input = open("./my_input", "r")
@@ -18,14 +18,10 @@ if __name__ == '__main__':
     stdin_to_stdout.daemon = True
     stdin_to_stdout.start()
 
-    #while True:
-    #    line = my_input.readline()
-    #    my_print("received localy: " + line + "\n")
-    #    print line
-
     for line in my_input:
-        my_print("received localy: " + line + "\n")
-        print line
+        my_print("received localy: " + line)
+        sys.stdout.write(line)
+        sys.stdout.flush()
 
 
     my_input.close()

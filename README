@@ -50,6 +50,7 @@ Wynik: GUESS_LIMIT - ilość prób
 
     <<< -1  players 2
     <<< -1  GUESS_LIMIT 5
+    <<< -1  MIN_NUMBER 10
     <<< -1  MAX_NUMBER 10
     <<< -1  start
     >>> -2  game started

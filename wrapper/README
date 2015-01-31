@@ -15,13 +15,18 @@ broken (because it could not change the game state anymore anyways, so why
 bother?), this means that the program will execute infinitelly if it does not
 end or is not interupted.
 
-Putting data manually to the wrapper.
+Putting data manually to the wrapper:
 
-STILL NOT WORKING, but is supposed to work be used like this:
-./create_fifo
-./wrapper ./manual_input address contest_id username password
-./input_for_manual_play 
-    and now You would type input, but it seems that the fifo is not flushed
-    properely or something
+Working sometimes, but better that than nothing.
+
+./create_fifo (ommitable if my_input already present)
+
+in parallel:
+    ./wrapper ./manual_input adress contest_id username password
+    ./input_for_manual_play # <- type input here
+
+
+
+
 
 
