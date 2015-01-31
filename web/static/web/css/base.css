@@ -79,3 +79,8 @@ table.std td
 {
     background-color: #21288d;
 }
+
+.href
+{
+    cursor: pointer;
+}
