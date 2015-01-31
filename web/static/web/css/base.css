@@ -1,38 +1,46 @@
-body {
+body
+{
     background-color: #0e485b;
     color: #feff3f;
 }
 
-div.site_wrapper {
+div.site_wrapper
+{
     background-color: #252525;
     padding: 20px;
 }
 
-div.small_login_form {
+div.small_login_form
+{
     text-align: right;
 }
 
-a {
+a
+{
     color: #feff3f;
 }
 
-a:hover {
+a:hover
+{
     color: #ffffff;
 }
 
-div.login_form {
+div.login_form
+{
     text-align: right;
     display: table;
     margin: auto;
 }
 
-div.login_form ul {
+div.login_form ul
+{
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
-div.login_form ul li {
+div.login_form ul li
+{
     margin: 10px;
 }
 
