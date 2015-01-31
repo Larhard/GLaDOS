@@ -15,6 +15,7 @@ class ContestAdmin(admin.ModelAdmin):
 
 class JudgeAdmin(admin.ModelAdmin):
     fields = [
+        'name',
         'path',
     ]
 

@@ -32,11 +32,12 @@ class Contest(CleanModel):
 
 class Judge(CleanModel):
     path = models.CharField(max_length=256)
+    name = models.CharField(max_length=250, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     was_default_judge = models.BooleanField(default=False)
 
     def __unicode__(self):
-        return "{} [{}]".format(self.path, self.id)
+        return "[{}] {}".format(self.id, self.name or self.path)
 
 
 class Match(CleanModel):
