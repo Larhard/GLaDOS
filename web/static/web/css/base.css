@@ -5,6 +5,7 @@ body {
 
 div.site_wrapper {
     background-color: #000000;
+    padding: 20px;
 }
 
 div.small_login_form {
