@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 from glados_auth.models import GladosUser
-from utils.models import CleanModel
+from utils.django.models import CleanModel
 
 
 class Contest(CleanModel):
