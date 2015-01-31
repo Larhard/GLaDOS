@@ -44,6 +44,13 @@ div.login_form ul li
     margin: 10px;
 }
 
+ul.std
+{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
 table.std
 {
     border-collapse: collapse;
@@ -83,4 +90,9 @@ table.std td
 .href
 {
     cursor: pointer;
+}
+
+.indent
+{
+    padding-left: 30px;
 }

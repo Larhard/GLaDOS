@@ -6,20 +6,34 @@
 {% endblock %}
 
 {% block content %}
-<p> Contest name: </p>
-<pre> {{ contest_info.name }} </pre>
-    
-<p> Contest description: </p>
-<pre> {{ contest_info.description }} </pre>
+    <ul class="std">
+        <li>
+            Contest name:
+            {% autoescape on %}{{ contest_info.name }}{% endautoescape %}
+        </li>
 
-<p> Contest default_judge: </p>
-<pre> {{ contest_info.default_judge }} </pre>
+        <li>
+            Contest description:
+            <div class="indent">
+                {% autoescape on %}{{ contest_info.description | linebreaksbr }}{% endautoescape %}
+            </div>
+        </li>
 
-<p> Contest players_count: </p>
-<pre> {{ contest_info.players_count }} </pre>
+        <li>
+            Contest default_judge:
+            {% autoescape on %}{{ contest_info.default_judge }}{% endautoescape %}
+        </li>
 
-<pre><a href="{% url 'web:contest_results' contest_info.id %}">
-{{ contest_info.name }} contest results</a></pre>
+        <li>
+            Contest players_count:
+            {% autoescape on %}{{ contest_info.players_count }}{% endautoescape %}
+        </li>
+
+        <li>
+            <a href="{% url 'web:contest_results' contest_info.id %}">
+                {{ contest_info.name }} contest results</a>
+        </li>
+    </ul>
 
 {% endblock %}
 
