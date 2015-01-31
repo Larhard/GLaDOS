@@ -7,14 +7,14 @@
 
 {% block content %}
     Contests:
-    <table>
-        <tr>
+    <table class="std">
+        <tr class="head">
             <th>id</th>
             <th>Name</th>
             <th>Description</th>
         </tr>
         {% for contest in contests %}
-            <tr>
+            <tr class="{% cycle 'row1' 'row2' %}">
                 <td>{{ contest.id }}</td>
                 <td><a href="{% url 'web:contest_details' contest.id %}">{{ contest.name }}</a></td>
                 <td>{{ contest.description }}</td>

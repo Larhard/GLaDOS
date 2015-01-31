@@ -4,7 +4,7 @@ body {
 }
 
 div.site_wrapper {
-    background-color: #000000;
+    background-color: #252525;
     padding: 20px;
 }
 
@@ -34,4 +34,30 @@ div.login_form ul {
 
 div.login_form ul li {
     margin: 10px;
+}
+
+table.std
+{
+    border-collapse: collapse;
+}
+
+table.std th,
+table.std td
+{
+    padding: 2px 10px;
+}
+
+.head
+{
+    background-color: #000000;
+}
+
+.row1
+{
+    background-color: #1e545b;
+}
+
+.row2
+{
+    background-color: #08365b;
 }
