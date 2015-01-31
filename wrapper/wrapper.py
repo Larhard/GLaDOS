@@ -6,6 +6,7 @@ from threading  import Thread
 from Queue import Queue, Empty
 
 import socket
+from program_holder import ProgramHolder
 
 QUEUE_SIZE = 10
 PORT = 8895
@@ -26,19 +27,6 @@ def split_socket(conn):
     yield buff
 
 
-def enqueue_input(myin, queue):
-    for line in iter(myin.readline, b''):
-        print line
-        queue.put(line.decode())
-    myin.close()
-
-def enqueue_output(myout, queue):
-    while True:
-        temp = queue.get()
-        myout.write(temp.encode())
-        myout.flush()
-    myout.close()
-
 def receive_from_remote(remote_socket, queue):
     for line in split_socket(remote_socket):
         queue.put(line) 
@@ -50,29 +38,6 @@ def send_to_remote(remote_socket, queue):
         remote_socket.send(temp)
     remote_socket.close()
 
-class ProgramHolder:
-    """Class for wrapping the external process"""
-    def __init__(self, program_name):
-        self.program_name = program_name
-        self.player = Popen([program_name], stdout=PIPE, stdin=PIPE)
-        self.player.daemon = False
-            #stderr=PIPE  - add this after end of debugging
-        self.in_queue = Queue(maxsize = QUEUE_SIZE)
-        self.in_thread = Thread(target=enqueue_input, 
-                            args=(self.player.stdout, self.in_queue))
-        self.in_thread.daemon = False # Wrapper ends life if programs breaks it's output pipe
-        self.in_thread.start()
-        self.out_queue = Queue(maxsize = QUEUE_SIZE)
-        self.out_thread = Thread(target=enqueue_output,
-                            args=(self.player.stdin, self.out_queue))
-        self.out_thread.daemon = True
-        self.out_thread.start()
-    def send(self, data_line):
-        self.out_queue.put(data_line)
-    def read(self):
-        return self.in_queue.get(block=True)
-    def kill(self):
-        self.player.kill()
 
 class Wrapper:
     def __init__(self, program_name, address, contest_id, username, password, port):
