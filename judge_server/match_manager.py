@@ -29,6 +29,11 @@ class Match(object):
         self.lobby = []
         self.judge = JudgeWrapper(judge_path=self.contest.default_judge.path, match=self)
 
+        init_parameters = self.contest.default_judge.init_parameters
+        if init_parameters:
+            for line in self.contest.default_judge.init_parameters.splitlines():
+                self.judge.send(line)
+
         self.match = core.models.Match()
         self.match.contest = self.contest
         self.match.judge = self.contest.default_judge
