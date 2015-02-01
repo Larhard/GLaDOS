@@ -9,6 +9,8 @@ urlpatterns = patterns('web.views',
                        url(r'^contest/(?P<contest_id>\d+)/$', 'contest_details', name='contest_details'),
                        url(r'^contest/(?P<contest_id>\d+)/results$', 'contest_results', name='contest_results'),
                        url(r'^contest/(?P<contest_id>\d+)/edit$', 'contest_edit', name='contest_edit'),
+                       url(r'^contest/(?P<contest_id>\d+)/match/$', 'match_list', name='match_list'),
+                       url(r'^contest/(?P<contest_id>\d+)/match/(?P<match_id>\d+)/$', 'match_details', name='match_details'),
                        url(r'^login/$', 'login_view', name='login'),
                        url(r'^logout/$', 'logout_view', name='logout'),
                        )

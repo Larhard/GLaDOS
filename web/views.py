@@ -6,7 +6,7 @@ from django.core.urlresolvers import NoReverseMatch
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
 
-from core.models import Contest, Judge
+from core.models import Contest, Judge, Match
 from core.models import Program
 
 
@@ -107,4 +107,26 @@ def contest_edit(request, contest_id):
     return render(request, 'web/contest_edit.html', {
         'contest': contest,
         'judges': judges,
+    })
+
+
+@login_required
+def match_list(request, contest_id):
+    contest = Contest.objects.get(id=contest_id)
+    matches = contest.match_set.order_by('-start')
+    return render(request, 'web/match_list.html', {
+        'contest': contest,
+        'matches': matches,
+    })
+
+
+@login_required
+def match_details(request, contest_id, match_id):
+    contest = Contest.objects.get(id=contest_id)
+    match = contest.match_set.get(id=match_id)
+    logs = match.matchlog_set.order_by('-time')
+    return render(request, 'web/match_details.html', {
+        'contest': contest,
+        'match': match,
+        'logs': logs,
     })

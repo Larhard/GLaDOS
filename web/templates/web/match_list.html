@@ -1,0 +1,21 @@
+{% extends 'web/site.html' %}
+
+{% block title %}
+    {{ block.super }}
+    - Match List
+{% endblock %}
+
+{% block content %}
+    <table class="std">
+        <tr class="head">
+            <th>id</th>
+            <th>Date</th>
+        </tr>
+        {% for match in matches %}
+            <tr class="{% cycle 'row1' 'row2' %} href" data-href="{% url 'web:match_details' contest.id match.id %}">
+                <td>{{ match.id }}</td>
+                <td>{{ match.start }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

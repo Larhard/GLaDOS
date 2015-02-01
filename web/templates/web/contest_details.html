@@ -35,6 +35,8 @@
         </li>
     </ul>
 
+    <a href="{% url 'web:match_list' contest_info.id %}">matches</a><br>
+
     {% if user.is_staff %}
         <a href="{% url 'web:contest_edit' contest_info.id %}">edit</a>
     {% endif %}
