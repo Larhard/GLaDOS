@@ -1,3 +1,6 @@
+import tempfile
+import shutil
+import os
 import sys
 from subprocess import PIPE, Popen
 from threading  import Thread
@@ -26,6 +29,9 @@ class ProgramHolder:
     """Class for wrapping the external process"""
     def __init__(self, program_name):
         self.program_name = program_name
+        self.tmpdir = tempfile.mkdtemp(prefix='caroline')
+        self.input_fifo_path = os.path.join(self.tmpdir, 'input_fifo')
+        os.mkfifo(self.input_fifo_path)
         self.program = Popen([program_name], stdout=PIPE, stdin=PIPE, shell=True)
         self.program.daemon = False
         #stderr=PIPE  - add this after end of debugging
@@ -57,6 +63,7 @@ class ProgramHolder:
             res = self.program.wait()  # TODO timeout
         if res is None:
             print " ::: ERROR ::: {} ({}) could not be terminated".format(self.program_name, self.program.pid)
+        shutil.rmtree(self.tmpdir)
 
     def __del__(self):
         self.close()
