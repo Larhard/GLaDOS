@@ -42,7 +42,7 @@ class ProgramHolder:
         self.in_thread.start()
         self.out_queue = Queue(maxsize = QUEUE_SIZE)
         self.out_thread = Thread(target=enqueue_output,
-            args=(self.program.stdin, self.out_queue))
+            args=(open(self.input_fifo_path, 'w'), self.out_queue))
         self.out_thread.daemon = True
         self.out_thread.start()
 
