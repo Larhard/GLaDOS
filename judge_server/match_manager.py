@@ -1,5 +1,6 @@
 import threading
 import time
+import weakref
 import core.models
 from judge_server.judge_wrapper import JudgeWrapper
 import re
@@ -105,6 +106,7 @@ class MatchManager(object):
     def __init__(self):
         self.matches_lock = threading.RLock()
         self.matches = {}
+        self.running_matches = weakref.WeakSet()
 
     def get_session(self, contest, user, conn):
         with self.matches_lock:
@@ -119,6 +121,14 @@ class MatchManager(object):
 
             if match.is_ready():
                 del self.matches[contest.id]
+                self.running_matches.add(match)
                 match.start()
 
             return match_session
+
+    def close(self):
+        for match in self.matches.values():
+            match.close()
+
+        for match in self.running_matches:
+            match.close()

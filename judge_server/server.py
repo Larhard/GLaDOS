@@ -89,6 +89,7 @@ class ServerThread(threading.Thread):
         self.running = False
         self.sock.shutdown(socket.SHUT_RDWR)
         self.join()
+        self.match_manager.close()
 
 
 class ServerBase:
