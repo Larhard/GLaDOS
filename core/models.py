@@ -7,7 +7,7 @@ from utils.django.models import CleanModel
 
 
 class Contest(CleanModel):
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=256, unique=True)
     description = models.TextField(null=True, blank=True)
     start = models.DateTimeField(default=timezone.now)
     end = models.DateTimeField(null=True, blank=True)
