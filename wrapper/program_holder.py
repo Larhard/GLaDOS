@@ -51,10 +51,10 @@ class ProgramHolder:
 
     def close(self):
         self.program.terminate()
-        res = self.program.wait(timeout=TERMINATE_TIMEOUT)
+        res = self.program.wait()  # TODO timeout
         if res is None:
             self.program.kill()
-            res = self.program.wait(timeout=TERMINATE_TIMEOUT)
+            res = self.program.wait()  # TODO timeout
         if res is None:
             print " ::: ERROR ::: {} ({}) could not be terminated".format(self.program_name, self.program.pid)
 
