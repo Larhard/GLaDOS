@@ -8,6 +8,8 @@ class JudgeWrapper(object):
         self.match = match
         self.program = ProgramHolder(self.judge_path)
         self.reader_thread = threading.Thread(target=self.reader)
+        self.reader_thread.setDaemon(True)
+        self.reader_thread.start()
 
     def reader(self):
         try:
