@@ -14,7 +14,7 @@ class MatchSession(object):
         self.player_id = player_id
 
     def send(self, what):
-        msg = '{} {}'.format(self.player_id, what)
+        msg = '{} {}\n'.format(self.player_id, what)
         self.match.judge.send(msg)
 
 
