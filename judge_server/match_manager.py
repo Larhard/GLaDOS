@@ -1,7 +1,7 @@
 import threading
 import time
 import core.models
-from judge_server.judge import JudgeWrapper
+from judge_server.judge_wrapper import JudgeWrapper
 import re
 
 
@@ -26,7 +26,7 @@ class Match(object):
     def __init__(self, contest):
         self.contest = contest
         self.lobby = []
-        self.judge = JudgeWrapper(match=self)
+        self.judge = JudgeWrapper(judge_path=self.contest.default_judge.path, match=self)
 
         self.match = core.models.Match()
         self.match.contest = self.contest
@@ -95,7 +95,7 @@ class Match(object):
         log.save()
 
     def close(self):
-        pass
+        self.judge.close()
 
     def execute(self, command):
         pass

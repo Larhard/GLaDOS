@@ -4,6 +4,7 @@ from threading  import Thread
 from Queue import Queue, Empty
 
 QUEUE_SIZE = 10
+TERMINATE_TIMEOUT = 3
 
 
 def enqueue_input(myin, queue):
@@ -48,5 +49,14 @@ class ProgramHolder:
     def kill(self):
         self.program.kill()
 
+    def close(self):
+        self.program.terminate()
+        res = self.program.wait(timeout=TERMINATE_TIMEOUT)
+        if res is None:
+            self.program.kill()
+            res = self.program.wait(timeout=TERMINATE_TIMEOUT)
+        if res is None:
+            print " ::: ERROR ::: {} ({}) could not be terminated".format(self.program_name, self.program.pid)
 
-
+    def __del__(self):
+        self.close()
