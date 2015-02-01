@@ -33,6 +33,7 @@ class Contest(CleanModel):
 class Judge(CleanModel):
     path = models.CharField(max_length=256)
     name = models.CharField(max_length=250, null=True, blank=True)
+    init_parameters = models.TextField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     was_default_judge = models.BooleanField(default=False)
 

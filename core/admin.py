@@ -17,6 +17,7 @@ class JudgeAdmin(admin.ModelAdmin):
     fields = [
         'name',
         'path',
+        'init_parameters',
     ]
 
 
