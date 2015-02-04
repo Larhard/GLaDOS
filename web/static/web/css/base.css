@@ -114,3 +114,13 @@ textarea.std
 {
     width: 400px;
 }
+
+div.banner
+{
+    text-align: center;
+}
+
+img.banner
+{
+    width: 25%;
+}
