@@ -1,5 +1,5 @@
 from django.shortcuts import render_to_response
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import NoReverseMatch
@@ -10,7 +10,6 @@ from django.core.exceptions import ValidationError
 
 from core.models import Contest, Judge, Match
 from core.models import Program
-
 
 @login_required
 def contest_list(request):
@@ -98,38 +97,6 @@ def judge_create(request):
         'error': error
     })
 
-def login_view(request):
-    redirect_url = request.GET.get('next', '/')
-    login_message = ""
-
-    if 'login' in request.POST:
-        username = request.POST.get('username', '')
-        password = request.POST.get('password', '')
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            login(request, user)
-            try:
-                return redirect(redirect_url)
-            except NoReverseMatch:
-                return redirect('/')
-        else:
-            login_message += "Login or Password incorrect"
-    return render(request, 'web/login_view.html', {
-        'login_message': login_message,
-    })
-
-
-def logout_view(request):
-    redirect_url = request.GET.get('next', '/')
-
-    logout(request)
-
-    try:
-        return redirect(redirect_url)
-    except NoReverseMatch:
-        return redirect('/')
-
-
 @staff_member_required
 def contest_edit(request, contest_id):
     redirect_url = request.GET.get('next', '/')
@@ -201,9 +168,59 @@ def match_list(request, contest_id):
 def match_details(request, contest_id, match_id):
     contest = Contest.objects.get(id=contest_id)
     match = contest.match_set.get(id=match_id)
-    logs = match.matchlog_set.order_by('-time')
+    logs = match.matchlog_set.order_by('time')
     return render(request, 'web/match_details.html', {
         'contest': contest,
         'match': match,
         'logs': logs,
     })
+
+@login_required
+def user_list(request):
+    user_model = get_user_model()
+    users = user_model.objects.all().values('username', 'id').order_by('id')
+    return render(request, 'web/user_list.html', {
+        'users': users,
+    })
+
+@login_required
+def user_details(request, user_id):
+    user_model = get_user_model()
+    user_info = {}
+    user_info['username'] = user_model.objects.get(pk=user_id).username
+    return render(request, 'web/user_details.html', {
+        'user_info': user_info,
+    })
+
+def login_view(request):
+    redirect_url = request.GET.get('next', '/')
+    login_message = ""
+
+    if 'login' in request.POST:
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+            try:
+                return redirect(redirect_url)
+            except NoReverseMatch:
+                return redirect('/')
+        else:
+            login_message += "Login or Password incorrect"
+    return render(request, 'web/login_view.html', {
+        'login_message': login_message,
+    })
+
+
+def logout_view(request):
+    redirect_url = request.GET.get('next', '/')
+
+    logout(request)
+
+    try:
+        return redirect(redirect_url)
+    except NoReverseMatch:
+        return redirect('/')
+
+

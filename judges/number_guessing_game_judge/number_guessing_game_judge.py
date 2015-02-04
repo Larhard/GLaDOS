@@ -82,6 +82,8 @@ class Judge:
                 if int(tmp[1]) == self.number_to_guess:
                     self.p_to_player_n(int(tmp[0]), 'end')
                     pp.score = pp.guesses_left
+                    self.log('player %s tried %s (correct)' \
+                            % (tmp[0], tmp[1]))
                     self.log('player %s score : %d' % (tmp[0], pp.score))
                 elif int(tmp[1]) > self.number_to_guess:
                     self.p_to_player_n(int(tmp[0]), 'lower')
@@ -105,8 +107,8 @@ class Judge:
         self.players = [PlayerData(self.guess_limit) for i in
                 xrange(self.players_amount)]
         self.log('game started')
-        self.log(self.min_number)
-        self.log(self.max_number)
+        self.log('min number ' + str(self.min_number))
+        self.log('max number ' + str(self.max_number))
 
         self.p_to_all(self.min_number)
         self.p_to_all(self.max_number)
