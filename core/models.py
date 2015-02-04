@@ -84,7 +84,7 @@ class Program(CleanModel):
     wins = models.IntegerField(default=0)
     defeats = models.IntegerField(default=0)
     ties = models.IntegerField(default=0)
-    source_code = models.FileField()
+    source_code = models.FileField(null=True, blank=True)
 
     def clean(self):
         errors = {}
