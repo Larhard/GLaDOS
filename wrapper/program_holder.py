@@ -9,7 +9,6 @@ TERMINATE_TIMEOUT = 3
 
 def enqueue_input(myin, queue):
     for line in iter(myin.readline, b''):
-        print line
         queue.put(line.decode())
     myin.close()
 
@@ -43,7 +42,6 @@ class ProgramHolder:
     def write(self, data_line, end='\n'):
         if data_line[-1] != end:
             data_line += end
-        print data_line
         self.out_queue.put(data_line)
 
     def read(self):
