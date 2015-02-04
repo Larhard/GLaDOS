@@ -93,7 +93,7 @@ class Match(object):
 
     def start(self):
         self.log("match: start")
-        self.judge.send('-1 START')
+        self.judge.send('-1 START\n')
 
     def log(self, what, priority=0):
         log = core.models.MatchLog()
