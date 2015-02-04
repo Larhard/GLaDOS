@@ -10,6 +10,17 @@ div.site_wrapper
     padding: 20px;
 }
 
+div.site_flex
+{
+    display: flex;
+}
+
+div.content_wrapper
+{
+    padding: 10px;
+    flex-grow: 1;
+}
+
 div.small_login_form
 {
     text-align: right;
@@ -123,4 +134,22 @@ div.banner
 img.banner
 {
     width: 25%;
+}
+
+ul.main_menu a
+{
+    text-decoration: none;
+    font-weight: bold;
+}
+
+ul.main_menu li
+{
+    padding: 5px 15px;
+    margin: 5px;
+    background-color: #1e545b;
+}
+
+ul.main_menu li:hover
+{
+    background-color: #1e7583;
 }

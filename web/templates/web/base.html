@@ -22,9 +22,16 @@
 <div class="site_wrapper">
     {% block login %}
     {% endblock %}
-    <div class="content_wrapper">
-        {% block content %}
-        {% endblock %}
+    <div class="site_flex">
+        <ul class="std main_menu">
+            {% block main_menu %}
+                {% include 'web/menu/site_menu.html' %}
+            {% endblock %}
+        </ul>
+        <div class="content_wrapper">
+            {% block content %}
+            {% endblock %}
+        </div>
     </div>
 </div>
 </body>
