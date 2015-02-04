@@ -13,11 +13,15 @@ def enqueue_input(myin, queue):
     myin.close()
 
 
-def enqueue_output(myout, queue):
-    while True:
-        temp = queue.get()
-        myout.write(temp.encode())
-        myout.flush()
+def enqueue_output(myout, queue, poll=None):
+    try:
+        while True:
+            temp = queue.get()
+            myout.write(temp.encode())
+            myout.flush()
+    except IOError as e:
+        if poll is None or poll() is None:
+            raise e
     myout.close()
 
 
@@ -35,7 +39,7 @@ class ProgramHolder:
         self.in_thread.start()
         self.out_queue = Queue(maxsize = QUEUE_SIZE)
         self.out_thread = Thread(target=enqueue_output,
-            args=(self.program.stdin, self.out_queue))
+            args=(self.program.stdin, self.out_queue, self.program.poll))
         self.out_thread.daemon = True
         self.out_thread.start()
 
