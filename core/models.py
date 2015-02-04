@@ -79,7 +79,7 @@ class MatchLog(CleanModel):
 class Program(CleanModel):
     user = models.ForeignKey(GladosUser)
     contest = models.ForeignKey(Contest)
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=256, null=True, blank=True)
     application_time = models.DateTimeField(default=timezone.now)
     wins = models.IntegerField(default=0)
     defeats = models.IntegerField(default=0)
