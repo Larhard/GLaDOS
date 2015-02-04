@@ -39,6 +39,8 @@ class Match(object):
         self.match.judge = self.contest.default_judge
         self.match.save()
 
+        self.log("match: judge: {}".format(self.contest.default_judge.path))
+        self.log("match: init_parameters:\n{}".format(self.contest.default_judge.init_parameters))
         self.log("match: init lobby")
 
     def register(self, user, conn):
@@ -91,7 +93,7 @@ class Match(object):
 
     def start(self):
         self.log("match: start")
-        self.judge.send('-1 START')
+        self.judge.send('-1 START\n')
 
     def log(self, what, priority=0):
         log = core.models.MatchLog()
