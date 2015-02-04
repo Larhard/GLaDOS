@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
 import random
+import sys
 
 
 class Bot:
@@ -16,12 +17,16 @@ class Bot:
 
         self.last_guess = 0
 
+    def output(self, what):
+        print what
+        sys.stdout.flush()
+
     def give_random(self):
-        print random.randint(self.total_min, self.total_max)
+        self.output(random.randint(self.total_min, self.total_max))
 
     def make_guess(self):
         self.last_guess = random.randint(self.current_min, self.current_max)
-        print self.last_guess
+        self.output(self.last_guess)
         
     def get_feedback(self):
         feedback = raw_input()
