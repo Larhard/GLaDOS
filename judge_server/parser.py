@@ -32,8 +32,9 @@ class MatchParser(ParserBase):
         self.conn = self.kwargs['connection']
         self.user = self.kwargs['user']
         self.contest = self.kwargs['contest']
+        self.program = self.kwargs['program']
 
-        self.match_session = self.match_manager.get_session(user=self.user, contest=self.contest, conn=self.conn)
+        self.match_session = self.match_manager.get_session(program=self.program, contest=self.contest, conn=self.conn)
 
     def cmd_all(self, what):
         self.match_session.send(what)

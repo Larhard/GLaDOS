@@ -7,8 +7,9 @@ import re
 
 
 class MatchSession(object):
-    def __init__(self, user, conn, match, player_id):
-        self.user = user
+    def __init__(self, program, conn, match, player_id):
+        self.program = program
+        self.user = self.program.user
         self.conn = conn
         self.match = match
         self.player_id = player_id
@@ -20,8 +21,9 @@ class MatchSession(object):
 
 class Match(object):
     class User(object):
-        def __init__(self, user, conn):
-            self.user = user
+        def __init__(self, program, conn):
+            self.program = program
+            self.user = self.program.user
             self.conn = conn
 
     def __init__(self, contest):
@@ -43,9 +45,9 @@ class Match(object):
         self.log("match: init_parameters:\n{}".format(self.contest.default_judge.init_parameters))
         self.log("match: init lobby")
 
-    def register(self, user, conn):
-        self.lobby.append(Match.User(user, conn))
-        return MatchSession(user=user, conn=conn, match=self, player_id=len(self.lobby))
+    def register(self, program, conn):
+        self.lobby.append(Match.User(program, conn))
+        return MatchSession(program=program, conn=conn, match=self, player_id=len(self.lobby))
 
     def is_ready(self):
         assert self.contest.players_count >= len(self.lobby)
@@ -115,7 +117,7 @@ class MatchManager(object):
         self.matches = {}
         self.running_matches = weakref.WeakSet()
 
-    def get_session(self, contest, user, conn):
+    def get_session(self, contest, program, conn):
         with self.matches_lock:
             if contest.id not in self.matches:
                 self.matches[contest.id] = Match(contest)
@@ -123,7 +125,7 @@ class MatchManager(object):
             match = self.matches[contest.id]
             assert match is not None
 
-            match_session = match.register(user=user, conn=conn)
+            match_session = match.register(program=program, conn=conn)
             assert match_session is not None
 
             if match.is_ready():
