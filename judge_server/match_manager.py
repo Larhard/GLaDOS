@@ -32,7 +32,7 @@ class Match(object):
         init_parameters = self.contest.default_judge.init_parameters
         if init_parameters:
             for line in self.contest.default_judge.init_parameters.splitlines():
-                self.judge.send(line)
+                self.judge.send(line + '\n')
 
         self.match = core.models.Match()
         self.match.contest = self.contest
