@@ -105,6 +105,7 @@ table.std td
 
 table.horizontal th
 {
+    vertical-align: top;
     text-align: right;
     width: 0;
 }
