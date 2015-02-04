@@ -6,34 +6,30 @@
 {% endblock %}
 
 {% block content %}
-    <ul class="std">
-        <li>
-            Contest name:
-            {% autoescape on %}{{ contest_info.name }}{% endautoescape %}
-        </li>
+    <table class="std horizontal">
+        <tr>
+            <th>Contest name:</th>
+            <td>{% autoescape on %}{{ contest_info.name }}{% endautoescape %}</td>
+        </tr>
 
-        <li>
-            Contest description:
-            <div class="indent">
-                {% autoescape on %}{{ contest_info.description | linebreaksbr }}{% endautoescape %}
-            </div>
-        </li>
+        <tr>
+            <th>Contest description:</th>
+            <td>{% autoescape on %}{{ contest_info.description | linebreaksbr }}{% endautoescape %}</td>
+        </tr>
 
-        <li>
-            Contest default_judge:
-            {% autoescape on %}{{ contest_info.default_judge }}{% endautoescape %}
-        </li>
+        <tr>
+            <th>Contest default_judge:</th>
+            <td>{% autoescape on %}{{ contest_info.default_judge }}{% endautoescape %}</td>
+        </tr>
 
-        <li>
-            Contest players_count:
-            {% autoescape on %}{{ contest_info.players_count }}{% endautoescape %}
-        </li>
+        <tr>
+            <th>Contest players_count:</th>
+            <td>{% autoescape on %}{{ contest_info.players_count }}{% endautoescape %}</td>
+        </tr>
+    </table>
 
-        <li>
-            <a href="{% url 'web:contest_results' contest_info.id %}">
-                {{ contest_info.name }} contest results</a>
-        </li>
-    </ul>
+    <a href="{% url 'web:contest_results' contest_info.id %}">
+        {{ contest_info.name }} contest results</a><br>
 
     <a href="{% url 'web:match_list' contest_info.id %}">matches</a><br>
 
