@@ -40,7 +40,7 @@ class ProgramHolder:
         self.out_thread.start()
 
     def write(self, data_line, end='\n'):
-        if data_line[-1] != end:
+        if len(data_line) == 0 or data_line[-1] != end:
             data_line += end
         self.out_queue.put(data_line)
 
