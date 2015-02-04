@@ -128,6 +128,11 @@ class MatchManager(object):
             match_session = match.register(program=program, conn=conn)
             assert match_session is not None
 
+            result = core.models.ProgramMatch()
+            result.program = program
+            result.match = match.match  # TODO ok, that does not look good...
+            result.save()
+
             if match.is_ready():
                 del self.matches[contest.id]
                 self.running_matches.add(match)
