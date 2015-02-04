@@ -1,5 +1,7 @@
 {#TODO make templatetag#}
-<li class="href" data-href="{% url 'web:contest_list' %}"><a href="{% url 'web:contest_list' %}">Contests</a></li>
+{% if user.is_authenticated %}
+    <li class="href" data-href="{% url 'web:contest_list' %}"><a href="{% url 'web:contest_list' %}">Contests</a></li>
+{% endif %}
 {% if user.is_staff %}
     <li class="href" data-href="{% url 'web:judge_list' %}"><a href="{% url 'web:judge_list' %}">Judges</a></li>
 {% endif %}
