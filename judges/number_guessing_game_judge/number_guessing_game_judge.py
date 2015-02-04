@@ -34,13 +34,13 @@ class Judge:
         sys.stdout.flush()
 
     def log(self, text):
-        self.output("-2  %s" % text)
+        self.output("-2 %s" % text)
 
     def p_to_all(self, text):
-        self.output("0  %s" % text)
+        self.output("0 %s" % text)
 
     def p_to_player_n(self, n, text):
-        self.output("%d  %s" % (n, text))
+        self.output("%d %s" % (n, text))
 
     def p_to_server(self, text):
         self.output("-1 %s" % text)
@@ -65,7 +65,7 @@ class Judge:
         self.guess_limit = self.get_parameter('GUESS_LIMIT')
         self.min_number = self.get_parameter('MIN_NUMBER')
         self.max_number = self.get_parameter('MAX_NUMBER')
-        
+
         tmp = self.get_input().split()
         if len(tmp) < 2 or tmp[0] != '-1' or tmp[1] != 'START':
             raise ValueError(
@@ -80,7 +80,7 @@ class Judge:
         else:
             try:
                 if int(tmp[1]) == self.number_to_guess:
-                    self.p_to_player_n(int(tmp[0]), 'end') 
+                    self.p_to_player_n(int(tmp[0]), 'end')
                     pp.score = pp.guesses_left
                     self.log('player %s score : %d' % (tmp[0], pp.score))
                 elif int(tmp[1]) > self.number_to_guess:
@@ -122,7 +122,7 @@ class Judge:
                                 # assuming server sends correct data
                     if self.players[int(tmp[0]) - 1].initial_random != (-1):
                         self.guesses_queue.put(' '.join(tmp))
-                                    # have to watch out on clients sending 
+                                    # have to watch out on clients sending
                                     # to many messages
                     else:
                         try:
