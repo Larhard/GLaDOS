@@ -14,7 +14,7 @@
             <th>Comment</th>
         </tr>
         {% for result in match.programmatch_set.all %}
-            <tr class="{% cycle 'row1' 'row2' %} href" data-href="{% url 'web:contest_details' contest.id %}">
+            <tr class="{% cycle 'row1' 'row2' %}">
                 <td>{{ result.program.user }}</td>
                 <td>{{ result.program }}</td>
                 <td>{{ result.score }}</td>
