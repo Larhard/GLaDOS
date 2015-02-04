@@ -35,12 +35,12 @@ class ProgramHolder:
         self.in_queue = Queue(maxsize = QUEUE_SIZE)
         self.in_thread = Thread(target=enqueue_input,
             args=(self.program.stdout, self.in_queue))
-        self.in_thread.daemon = False # Wrapper ends life if programs breaks it's output pipe
+        self.in_thread.setDaemon(True)
         self.in_thread.start()
         self.out_queue = Queue(maxsize = QUEUE_SIZE)
         self.out_thread = Thread(target=enqueue_output,
             args=(self.program.stdin, self.out_queue, self.program.poll))
-        self.out_thread.daemon = True
+        self.out_thread.setDaemon(True)
         self.out_thread.start()
 
     def write(self, data_line, end='\n'):
