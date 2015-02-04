@@ -6,29 +6,27 @@
 {% endblock %}
 
 {% block content %}
-    <ul class="std">
-        <li>
-            Judge name:
-            {% autoescape on %}{{ judge_info.name }}{% endautoescape %}
-        </li>
+    <table class="std horizontal">
+        <tr>
+            <th>Judge name:</th>
+            <td>{% autoescape on %}{{ judge_info.name }}{% endautoescape %}</td>
+        </tr>
 
-        <li>
-            Judge description:
-            <div class="indent">
-                {% autoescape on %}{{ judge_info.description | linebreaksbr }}{% endautoescape %}
-            </div>
-        </li>
+        <tr>
+            <th>Judge description:</th>
+            <td>{% autoescape on %}{{ judge_info.description | linebreaksbr }}{% endautoescape %}</td>
+        </tr>
 
-        <li>
-            Path:
-            {% autoescape on %}{{ judge_info.path }}{% endautoescape %}
-        </li>
+        <tr>
+            <th>Path:</th>
+            <td>{% autoescape on %}{{ judge_info.path }}{% endautoescape %}</td>
+        </tr>
 
-        <li>
-            Initial parameters:
-            {% autoescape on %}{{ judge_info.init_parameters }}{% endautoescape %}
-        </li>
-    </ul>
+        <tr>
+            <th>Initial parameters:</th>
+            <td>{% autoescape on %}{{ judge_info.init_parameters | linebreaksbr }}{% endautoescape %}</td>
+        </tr>
+    </table>
 
     {% if user.is_staff %}
         <a href="{% url 'web:judge_edit' judge_info.id %}">edit</a>
