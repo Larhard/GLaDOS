@@ -201,7 +201,7 @@ def match_list(request, contest_id):
 def match_details(request, contest_id, match_id):
     contest = Contest.objects.get(id=contest_id)
     match = contest.match_set.get(id=match_id)
-    logs = match.matchlog_set.order_by('-time')
+    logs = match.matchlog_set.order_by('time')
     return render(request, 'web/match_details.html', {
         'contest': contest,
         'match': match,
