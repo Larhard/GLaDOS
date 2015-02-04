@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block content %}
+    {% if user.is_staff %}
     Logs:
     <table class="std">
         <tr class="head">
@@ -21,4 +22,5 @@
             </tr>
         {% endfor %}
     </table>
+    {% endif %}
 {% endblock %}
