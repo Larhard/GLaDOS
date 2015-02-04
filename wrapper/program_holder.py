@@ -40,7 +40,10 @@ class ProgramHolder:
         self.out_thread.daemon = True
         self.out_thread.start()
 
-    def write(self, data_line):
+    def write(self, data_line, end='\n'):
+        if data_line[-1] != end:
+            data_line += end
+        print data_line
         self.out_queue.put(data_line)
 
     def read(self):
