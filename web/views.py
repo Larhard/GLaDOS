@@ -6,6 +6,8 @@ from django.core.urlresolvers import NoReverseMatch
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
 
+from django.core.exceptions import ValidationError
+
 from core.models import Contest, Judge, Match
 from core.models import Program
 
@@ -41,23 +43,28 @@ def contest_create(request):
     error = ""
 
     if 'create' in request.POST:
+        contest = Contest()
+        contest.name = request.POST.get('contest_name', '')
+        contest.description = request.POST.get('contest_description', '')
+        contest.players_count = int(request.POST.get('contest_players_count', ''))
         try:
-            contest = Contest()
-            contest.name = request.POST.get('contest_name', '')
-            contest.description = request.POST.get('contest_description', '')
-            try:
-                contest.players_count = int(request.POST.get('contest_players_count', ''))
-            except ValueError:
-                error += "players_count has to be integer"
             contest.save()
+        except ValidationError as e:
+            error += str(e) + "\n"
         except IntegrityError as e:
-            error += str(e)
-        else:
+            ERROR += str(e) + "\n"
+
+        if error == "":
             return redirect(redirect_url)
+
+        return render(request, 'web/validation_error.html', {
+            'error': error
+        })
 
     return render(request, 'web/contest_create.html', {
         'error': error
     })
+
 
 
 def login_view(request):
