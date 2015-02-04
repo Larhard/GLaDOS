@@ -64,9 +64,9 @@ class Judge:
         self.max_number = self.get_parameter('MAX_NUMBER')
         
         tmp = self.get_input().split()
-        if len(tmp) < 2 or tmp[0] != '-1' or tmp[1] != 'start':
+        if len(tmp) < 2 or tmp[0] != '-1' or tmp[1] != 'START':
             raise ValueError(
-                    "Got unexpected parameters. Expected '-1 start', got '%s'." \
+                    "Got unexpected parameters. Expected '-1 START', got '%s'." \
                             % ' '.join(tmp))
 
     def process_guess(self, text):
