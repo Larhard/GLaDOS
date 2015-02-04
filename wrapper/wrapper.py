@@ -59,7 +59,7 @@ class Wrapper:
             raise Exception("Unexpected message from server: " + tmp)
         else:
             print "Logged in"
-        
+
         self.remote_in = Thread(target=receive_from_remote,
                             args=(self.socket, self.program))
         self.remote_in.setDaemon(True)

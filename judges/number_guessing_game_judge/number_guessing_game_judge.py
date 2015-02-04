@@ -4,6 +4,17 @@ import Queue
 import sys
 
 
+class Logger(object):
+    def __init__(self, log_file):
+        self.file = open(log_file, 'a')
+
+    def log(self, what):
+        self.file.write(what + "\n")
+        self.file.flush()
+
+logger = Logger('judge.log')
+
+
 class PlayerData:
     """
     Class for holding and manipulating information about players.
@@ -13,6 +24,7 @@ class PlayerData:
         self.guesses_left = guesses_available
         self.initial_random = (-1)
         self.score = 0
+        logger.log('init player')
 
     def ended_game(self):
         return self.guesses_left == 0 or self.score != 0
@@ -27,9 +39,13 @@ class Judge:
     """
 
     def get_input(self):
-        return raw_input()
+        logger.log('reading')
+        data = raw_input()
+        logger.log('read {}'.format(data))
+        return data
 
     def output(self, text):
+        logger.log("judge_output: " + text)
         print text
         sys.stdout.flush()
 

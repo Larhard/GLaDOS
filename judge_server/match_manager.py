@@ -62,9 +62,11 @@ class Match(object):
         if rmatch is not None:
             recipient = int(rmatch.group('recipient'))
             message = rmatch.group('message')
+            print message
 
             # broadcast to all players
             if recipient == 0:
+                print "BROADCASTING {}".format(message)
                 for user in self.lobby:
                     user.conn.send(message)
                 return
