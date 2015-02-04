@@ -27,9 +27,9 @@ def split_socket(conn):
     yield buff
 
 
-def receive_from_remote(remote_socket, queue):
+def receive_from_remote(remote_socket, out):
     for line in split_socket(remote_socket):
-        queue.put(line) 
+        out.write(line)
     remote_socket.close()
 
 def send_to_remote(remote_socket, queue):
@@ -61,7 +61,7 @@ class Wrapper:
             print "Logged in"
         
         self.remote_in = Thread(target=receive_from_remote,
-                            args=(self.socket, self.program.out_queue))
+                            args=(self.socket, self.program))
         self.remote_in.daemon = True
         self.remote_in.start()
 
