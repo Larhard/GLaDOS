@@ -8,9 +8,8 @@ class Bot:
     """
         
     def set_parameters(self):
-        self.number_list = map(int, raw_input().split())
-        self.total_min = self.number_list[0]
-        self.total_max = self.number_list[1]
+        self.total_min = int(raw_input())
+        self.total_max = int(raw_input())
 
         self.current_min = self.total_min
         self.current_max = self.total_max
