@@ -40,7 +40,7 @@ def send_to_remote(remote_socket, queue):
 
 
 class Wrapper:
-    def __init__(self, program_name, address, contest_id, username, password, port):
+    def __init__(self, program_name, address, contest_id, username, password, port, program=None):
         self.program_name = program_name
         self.address = address
         self.contest_id = contest_id
@@ -52,14 +52,39 @@ class Wrapper:
         self.socket = socket.socket()
         self.socket.connect((self.address, port))
 
-        self.socket.send("join "+contest_id+" as "+username+" password "+password+"\n")
+        self.socket.send("login "+username+" password "+password+"\n")
         tmp = self.socket.recv(1024)
 
         if tmp.strip() != "OK":
             raise Exception("Unexpected message from server: " + tmp)
         else:
             print "Logged in"
-        
+
+        if program:
+            self.socket.send("program "+program+"\n")
+            tmp = self.socket.recv(1024)
+
+            if tmp.strip() != "OK":
+                raise Exception("Unexpected message from server: " + tmp)
+            else:
+                print "Program set"
+
+        self.socket.send("join "+contest_id+"\n")
+        tmp = self.socket.recv(1024)
+
+        if tmp.strip() != "OK":
+            raise Exception("Unexpected message from server: " + tmp)
+        else:
+            print "Contest joined"
+
+        self.socket.send("start\n")
+        tmp = self.socket.recv(1024)
+
+        if tmp.strip() != "OK":
+            raise Exception("Unexpected message from server: " + tmp)
+        else:
+            print "Started"
+
         self.remote_in = Thread(target=receive_from_remote,
                             args=(self.socket, self.program))
         self.remote_in.setDaemon(True)

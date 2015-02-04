@@ -1,5 +1,5 @@
 from urllib import unquote
-from core.models import Contest
+from core.models import Contest, Program
 from django.contrib.auth import authenticate
 import re
 
@@ -41,11 +41,19 @@ class MatchParser(ParserBase):
 
 
 class InitParser(ParserBase):
+    def __init__(self, *args, **kwargs):
+        super(InitParser, self).__init__(*args, **kwargs)
+        self.user = None
+        self.contest = None
+        self.program = None
+
     def cmd_help(self, what):
         cmd = re.match('^\s*help\s*$', what, re.I)
         if cmd:
             reply = 'OK\n'
-            reply += '# JOIN <contest_id> AS <urlencoded username> PASSWORD <urlencoded password>\n'
+            reply += '# LOGIN <urlencoded username> PASSWORD <urlencoded password>\n'
+            reply += '# PROGRAM <urlencoded program name>\n'
+            reply += '# JOIN <contest_id>\n'
             return reply, self
 
     def cmd_empty(self, what):
@@ -53,29 +61,81 @@ class InitParser(ParserBase):
         if cmd:
             return "", self
 
+    def cmd_program(self, what):
+        cmd = re.match('^\s*PROGRAM\s+(?P<program>[^\s])\s*$',
+            what, re.I)
+
+        if cmd:
+            program_name = cmd.group('program')
+
+            if not self.user:
+                return "LOGIN REQUIRED\n", self
+            if not self.contest:
+                return "JOIN REQUIRED\n", self
+
+            try:
+                program = Program.objects.get(contest=self.contest, user=self.user, name=program_name)
+            except Contest.DoesNotExist:
+                program = Program()
+                program.contest = self.contest
+                program.user = self.user
+                program.name = program_name
+                program.save()
+
+            self.program = program
+
+            return "OK\n", self
+
+    def cmd_start(self, what):
+        cmd = re.match('^\s*START\s*$', what, re.I)
+
+        if cmd:
+            if not self.user:
+                return "LOGIN REQUIRED\n", self
+            if not self.contest:
+                return "JOIN REQUIRED\n", self
+
+            if not self.program:
+                self.program = Program()
+                self.program.contest = self.contest
+                self.program.user = self.user
+                self.program.save()
+
+            return "OK\n", MatchParser(*self.args, contest=self.contest, user=self.user, program=self.program, **self.kwargs)
+
     def cmd_join(self, what):
-        cmd = re.match('^\s*join\s+(?P<contest>\d+)\s+as\s+(?P<user>[^ ]*)\s+PASSWORD\s+(?P<password>[^ ]*)\s*$',
+        cmd = re.match('^\s*JOIN\s+(?P<contest>\d+)\s*$',
+            what, re.I)
+
+        if cmd:
+            contest_id = cmd.group('contest')
+
+            if not self.user:
+                return "LOGIN REQUIRED\n", self
+
+            try:
+                self.contest = Contest.objects.get(pk=contest_id)
+            except Contest.DoesNotExist:
+                return "FAIL INVALID_CONTEST\n", self
+
+            if self.contest.default_judge is None:
+                return "FAIL INVALID_CONTEST\n", self
+
+            return "OK\n", self
+
+    def cmd_login(self, what):
+        cmd = re.match('^\s*LOGIN\s+(?P<user>[^\s]*)\s+PASSWORD\s+(?P<password>[^\s]*)\s*$',
             what, re.I)
 
         if cmd:
             username = unquote(cmd.group('user'))
             password = unquote(cmd.group('password'))
-            contest_id = cmd.group('contest')
 
             user = authenticate(username=username, password=password)
 
             if not user:
                 return "FAIL INVALID_PASSWORD\n", self
 
-            try:
-                contest = Contest.objects.get(pk=contest_id)
-            except Contest.DoesNotExist:
-                return "FAIL INVALID_CONTEST\n", self
+            self.user = user
 
-            if contest.default_judge is None:
-                return "FAIL INVALID_CONTEST\n", self
-
-            assert contest is not None
-            assert user is not None
-
-            return "OK\n", MatchParser(*self.args, contest=contest, user=user, **self.kwargs)
+            return "OK\n", self
