@@ -55,13 +55,14 @@ class ProgramHolder:
         self.program.kill()
 
     def close(self):
-        self.program.terminate()
-        res = self.program.wait()  # TODO timeout
-        if res is None:
-            self.program.kill()
+        if self.program.poll() is None:
+            self.program.terminate()
             res = self.program.wait()  # TODO timeout
-        if res is None:
-            print " ::: ERROR ::: {} ({}) could not be terminated".format(self.program_name, self.program.pid)
+            if res is None:
+                self.program.kill()
+                res = self.program.wait()  # TODO timeout
+            if res is None:
+                print " ::: ERROR ::: {} ({}) could not be terminated".format(self.program_name, self.program.pid)
 
     def __del__(self):
         self.close()
