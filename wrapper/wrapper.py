@@ -62,19 +62,15 @@ class Wrapper:
         
         self.remote_in = Thread(target=receive_from_remote,
                             args=(self.socket, self.program))
-        self.remote_in.daemon = True
+        self.remote_in.setDaemon(True)
         self.remote_in.start()
 
         self.remote_out = Thread(target=send_to_remote,
                             args=(self.socket, self.program.in_queue))
-        self.remote_out.daemon = True
+        self.remote_out.setDaemon(True)
         self.remote_out.start()
 
-        self.remote_in.join()
-        self.remote_out.join()
-
         self.program.in_thread.join()
-        self.program.out_thread.join()
 
 
 if __name__ == '__main__':
