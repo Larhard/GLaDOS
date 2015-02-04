@@ -1,6 +1,8 @@
 #!/bin/env python2
 import random
 import Queue
+import sys
+
 
 class PlayerData:
     """
@@ -29,6 +31,7 @@ class Judge:
 
     def output(self, text):
         print text
+        sys.stdout.flush()
 
     def log(self, text):
         self.output("-2  %s" % text)
