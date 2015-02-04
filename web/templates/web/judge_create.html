@@ -1,0 +1,42 @@
+{% extends 'web/site.html' %}
+
+{% block title %}
+    {{ block.super }}
+    - Add Judge
+{% endblock %}
+
+{% block content %}
+    {% if error %}
+        {{ error }}
+    {% endif %}
+    <form action="{{ request.get_full_path }}" method="post">{% csrf_token %}
+        <ul>
+            <li>
+                <label>
+                    Name:
+                    <input type="text" name="judge_name">
+                </label>
+            </li>
+            <li>
+                <label>
+                    Description:<br>
+                    <textarea name="judge_description"></textarea>
+                </label>
+            </li>
+            <li>
+                <label>
+                    Initial parameters:<br>
+                    <input type="text" name="judge_init_parameters">
+                </label>
+            </li>
+            <li>
+                <label>
+                    Path:
+                    <input type="text" name="judge_path">
+                </label>
+            </li>
+        </ul>
+        <input type="hidden" name="create">
+        <input type="submit" value="Create">
+    </form>
+{% endblock %}
