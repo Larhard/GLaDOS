@@ -1,0 +1,16 @@
+{% extends 'web/site.html' %}
+
+{% block title %}
+    {{ block.super }}
+    - Validation erroValidation error
+{% endblock %}
+
+{% block content %}
+    <ul class="std">
+        <li>
+            {% autoescape on %}{{ error }}{% endautoescape %}
+        </li>
+    </ul>
+
+{% endblock %}
+
