@@ -2,10 +2,13 @@
 
 {% block title %}
     {{ block.super }}
-    - Contests Edit
+    - Contest Edit
 {% endblock %}
 
 {% block content %}
+    {% if error %}
+        {{ error }}
+    {% endif %}
     <form action="{% url 'web:contest_edit' contest.id %}" method="post">
         {% csrf_token %}
         <table class="std horizontal">

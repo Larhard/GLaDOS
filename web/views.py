@@ -19,7 +19,6 @@ def contest_list(request):
         'contests': contests,
     })
 
-
 @login_required
 def contest_details(request, contest_id):
     contest_info = Contest.objects.get(pk=contest_id)
@@ -36,7 +35,6 @@ def contest_results(request, contest_id):
         'contest': contest,
     })
 
-
 @staff_member_required
 def contest_create(request):
     redirect_url = request.GET.get('next', '/')
@@ -52,20 +50,53 @@ def contest_create(request):
         except ValidationError as e:
             error += str(e) + "\n"
         except IntegrityError as e:
-            ERROR += str(e) + "\n"
+            error += str(e) + "\n"
 
         if error == "":
             return redirect(redirect_url)
-
-        return render(request, 'web/validation_error.html', {
-            'error': error
-        })
 
     return render(request, 'web/contest_create.html', {
         'error': error
     })
 
+@login_required
+def judge_list(request):
+    judges = Judge.objects.all()
+    return render(request, 'web/judge_list.html', {
+        'judges': judges,
+    })
 
+@login_required
+def judge_details(request, judge_id):
+    judge_info = Judge.objects.get(pk=judge_id)
+    return render(request, 'web/judge_details.html', {
+        'judge_info': judge_info,
+    })
+
+@staff_member_required
+def judge_create(request):
+    redirect_url = request.GET.get('next', '/')
+    error = ""
+
+    if 'create' in request.POST:
+        judge = Judge()
+        judge.name = request.POST.get('judge_name', '')
+        judge.description = request.POST.get('judge_description', '')
+        judge.path = request.POST.get('judge_path', '')
+        judge.init_parameters = request.POST.get('judge_init_parameters', '')
+        try:
+            judge.save()
+        except ValidationError as e:
+            error += str(e) + "\n"
+        except IntegrityError as e:
+            error += str(e) + "\n"
+
+        if error == "":
+            return redirect(redirect_url)
+
+    return render(request, 'web/judge_create.html', {
+        'error': error
+    })
 
 def login_view(request):
     redirect_url = request.GET.get('next', '/')
@@ -101,6 +132,9 @@ def logout_view(request):
 
 @staff_member_required
 def contest_edit(request, contest_id):
+    redirect_url = request.GET.get('next', '/')
+    error = ""
+
     if 'save' in request.POST:
         contest = Contest.objects.get(id=contest_id)
         contest.name = request.POST['name']
@@ -108,14 +142,50 @@ def contest_edit(request, contest_id):
         contest.players_count = int(request.POST['players_count'])
         contest.default_judge_id = None if request.POST['default_judge'] == 'None' \
             else int(request.POST['default_judge'])
-        contest.save()
+        try:
+            contest.save()
+        except ValidationError as e:
+            error += str(e) + "\n"
+        except IntegrityError as e:
+            error += str(e) + "\n"
+
+        if error == "":
+            return redirect(redirect_url)
+
     contest = Contest.objects.get(id=contest_id)
     judges = Judge.objects.all()
     return render(request, 'web/contest_edit.html', {
+        'error': error,
         'contest': contest,
         'judges': judges,
     })
 
+@staff_member_required
+def judge_edit(request, judge_id):
+    redirect_url = request.GET.get('next', '/')
+    error = ""
+
+    if 'save' in request.POST:
+        judge = Judge.objects.get(id=judge_id)
+        judge.name = request.POST['name']
+        judge.description = request.POST['description']
+        judge.init_parameters = request.POST['init_parameters']
+        judge.path = request.POST['path']
+        try:
+            judge.save()
+        except ValidationError as e:
+            error += str(e) + "\n"
+        except IntegrityError as e:
+            error += str(e) + "\n"
+
+        if error == "":
+            return redirect(redirect_url)
+
+    judge = Judge.objects.get(id=judge_id)
+    return render(request, 'web/judge_edit.html', {
+        'error': error,
+        'judge': judge,
+    })
 
 @login_required
 def match_list(request, contest_id):

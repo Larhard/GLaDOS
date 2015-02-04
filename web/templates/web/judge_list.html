@@ -1,0 +1,29 @@
+{% extends 'web/site.html' %}
+
+{% block title %}
+    {{ block.super }}
+    - Judge List
+{% endblock %}
+
+{% block content %}
+    Judges:
+    <table class="std">
+        <tr class="head">
+            <th>id</th>
+            <th>Name</th>
+            <th>Description</th>
+        </tr>
+        {% for judge in judges %}
+            <tr class="{% cycle 'row1' 'row2' %} href" data-href="{% url 'web:judge_details' judge.id %}">
+                <td>{{ judge.id }}</td>
+                <td><a href="{% url 'web:judge_details' judge.id %}">{{ judge.name }}</a></td>
+                <td>{{ judge.description }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    {% if user.is_staff %}
+        <a href="{% url 'web:judge_create' %}?r={{ request.get_full_path | urlencode:'' }}">Create</a>
+    {% endif %}
+{% endblock %}
+

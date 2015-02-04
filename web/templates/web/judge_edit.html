@@ -1,0 +1,38 @@
+{% extends 'web/site.html' %}
+
+{% block title %}
+    {{ block.super }}
+    - Judge Edit
+{% endblock %}
+
+{% block content %}
+    {% if error %}
+        {{ error }}
+    {% endif %}
+    <form action="{% url 'web:judge_edit' judge.id %}" method="post">
+        {% csrf_token %}
+        <table class="std horizontal">
+            <tr>
+                <th><label for="edit_judge_name">Judge name:</label></th>
+                <td><input id="edit_judge_name" type="text" name="name" value="{{ judge.name }}"/></td>
+            </tr>
+            
+            <tr>
+                <th><label for="edit_judge_path">Path:</label></th>
+                <td><input id="edit_judge_path" type="text" name="path" value="{{ judge.path }}"/></td>
+            </tr>
+
+            <tr>
+                <th><label for="edit_judge_description">Judge description:</label></th>
+                <td><textarea id="edit_judge_description" class="std" name="description">{{ judge.description }}</textarea></td>
+            </tr>
+
+            <tr>
+                <th><label for="edit_judge_init_parameters">Initial parameters:</label></th>
+                <td><textarea id="edit_judge_init_parameters" class="std" name="init_parameters">{{ judge.init_parameters }}</textarea></td>
+            </tr>
+
+        </table>
+        <input type="submit" name="save" value="save">
+    </form>
+{% endblock %}

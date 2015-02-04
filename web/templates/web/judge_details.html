@@ -1,0 +1,38 @@
+{% extends 'web/site.html' %}
+
+{% block title %}
+    {{ block.super }}
+    - Judge details
+{% endblock %}
+
+{% block content %}
+    <ul class="std">
+        <li>
+            Judge name:
+            {% autoescape on %}{{ judge_info.name }}{% endautoescape %}
+        </li>
+
+        <li>
+            Judge description:
+            <div class="indent">
+                {% autoescape on %}{{ judge_info.description | linebreaksbr }}{% endautoescape %}
+            </div>
+        </li>
+
+        <li>
+            Path:
+            {% autoescape on %}{{ judge_info.path }}{% endautoescape %}
+        </li>
+
+        <li>
+            Initial parameters:
+            {% autoescape on %}{{ judge_info.init_parameters }}{% endautoescape %}
+        </li>
+    </ul>
+
+    {% if user.is_staff %}
+        <a href="{% url 'web:judge_edit' judge_info.id %}">edit</a>
+    {% endif %}
+
+{% endblock %}
+
