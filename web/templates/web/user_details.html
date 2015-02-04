@@ -1,0 +1,17 @@
+{% extends 'web/site.html' %}
+
+{% block title %}
+    {{ block.super }}
+    - Users details
+{% endblock %}
+
+{% block content %}
+    <table class="std horizontal">
+        <tr>
+            <th>Username:</th>
+            <td>{% autoescape on %}{{ user_info.username }}{% endautoescape %}</td>
+        </tr>
+    </table>
+
+{% endblock %}
+

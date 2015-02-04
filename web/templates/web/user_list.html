@@ -1,0 +1,24 @@
+{% extends 'web/site.html' %}
+
+{% block title %}
+    {{ block.super }}
+    - User List
+{% endblock %}
+
+{% block content %}
+    Users:
+    <table class="std">
+        <tr class="head">
+            <th class="min_width">id</th>
+            <th>Username</th>
+        </tr>
+        {% for user in users %}
+            <tr class="{% cycle 'row1' 'row2' %} href" data-href="{% url 'web:user_details' user.id %}">
+                <td>{{ user.id }}</td>
+                <td><a href="{% url 'web:user_details' user.id %}">{{ user.username }}</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}
+
