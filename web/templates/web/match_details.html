@@ -6,6 +6,9 @@
 {% endblock %}
 
 {% block content %}
+    {% if error %}
+        <div style="text-align: center; font-weight: bold">{{ error }}</div>
+    {% endif %}
     <table class="std">
         <tr class="head">
             <th>User</th>
@@ -25,7 +28,7 @@
     {% if not match.ended  %}
         <div style="font-weight: bold; text-align: center;">Match in progress</div>
     {% endif %}
-    {% if user.is_staff or match.ended %}
+    {% if logs and user.is_staff or match.ended %}
     Logs:
     <table class="std">
         <tr class="head">

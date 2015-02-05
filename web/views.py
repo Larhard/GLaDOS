@@ -157,7 +157,10 @@ def judge_edit(request, judge_id):
 @login_required
 def match_list(request, contest_id):
     contest = Contest.objects.get(id=contest_id)
-    matches = contest.match_set.order_by('-start')
+    matches = contest.match_set
+    if not request.user.is_staff:
+        matches = contest.match_set.filter(programmatch__program__user=request.user)
+    matches = matches.order_by('-start')
     return render(request, 'web/match_list.html', {
         'contest': contest,
         'matches': matches,
@@ -167,8 +170,16 @@ def match_list(request, contest_id):
 def match_details(request, contest_id, match_id):
     contest = Contest.objects.get(id=contest_id)
     match = contest.match_set.get(id=match_id)
-    logs = match.matchlog_set.order_by('time')
+    logs = None
+    error = None
+
+    if not request.user.is_staff and request.user not in match.get_user_set():
+        error = "This is not your match"
+    else:
+        logs = match.matchlog_set.order_by('time')
+
     return render(request, 'web/match_details.html', {
+        'error': error,
         'contest': contest,
         'match': match,
         'logs': logs,

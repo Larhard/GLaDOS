@@ -47,6 +47,12 @@ class Match(CleanModel):
     start = models.DateTimeField(default=timezone.now)
     ended = models.BooleanField(default=False)
 
+    def get_user_set(self):
+        result = set()
+        for match_result in self.programmatch_set.all():
+            result.add(match_result.program.user)
+        return result
+
     def clean(self):
         errors = {}
         if self.judge.was_default_judge != True:
