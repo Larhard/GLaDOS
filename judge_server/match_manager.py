@@ -135,9 +135,9 @@ class Match(object):
                 player = self.lobby[player_id]
             except IndexError:
                 return None
-            result = player.result
-            result.comment = comment
-            result.save()
+            program = player.program
+            program.comment = comment
+            program.save()
             return True
 
         rmatch = re.match('^\s*end\s*$', command, re.I)
@@ -152,9 +152,9 @@ class Match(object):
                 player = self.lobby[player_id]
             except IndexError:
                 return None
-            result = player.result
-            result.wins += 1
-            result.save()
+            program = player.program
+            program.wins += 1
+            program.save()
             return True
 
         rmatch = re.match('^\s*lose\s+(?P<player_id>\d+)\s*', command, re.I)
@@ -164,9 +164,9 @@ class Match(object):
                 player = self.lobby[player_id]
             except IndexError:
                 return None
-            result = player.result
-            result.defeats += 1
-            result.save()
+            program = player.program
+            program.defeats += 1
+            program.save()
             return True
 
         rmatch = re.match('^\s*tie\s+(?P<player_id>\d+)\s*', command, re.I)
