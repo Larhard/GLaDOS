@@ -22,6 +22,9 @@
             </tr>
         {% endfor %}
     </table>
+    {% if not match.ended  %}
+        <div style="font-weight: bold; text-align: center;">Match in progress</div>
+    {% endif %}
     {% if user.is_staff or match.ended %}
     Logs:
     <table class="std">
