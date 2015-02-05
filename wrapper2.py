@@ -4,7 +4,7 @@ import argparse
 import getpass
 import sys
 import re
-from wrapper import Wrapper
+from wrapper.wrapper import Wrapper
 
 DEFAULT_CAROLINE_PORT = 8895
 
