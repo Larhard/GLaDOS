@@ -22,7 +22,7 @@
             </tr>
         {% endfor %}
     </table>
-    {% if user.is_staff %}
+    {% if user.is_staff or match.ended %}
     Logs:
     <table class="std">
         <tr class="head">
