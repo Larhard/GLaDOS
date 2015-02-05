@@ -21,7 +21,7 @@ In release use fcgi
 
 Test model
     
-    $ ./manage.py test core/tests/
+    $ ./manage.py test 
 
 # Gra testowa: Zgadywanie liczby
 
