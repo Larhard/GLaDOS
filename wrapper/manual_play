@@ -14,9 +14,9 @@ def print_received():
 if __name__ == '__main__':
     my_input = open("./my_input", "r")
 
-    stdin_to_stdout = Thread(target=print_received)
-    stdin_to_stdout.daemon = True
-    stdin_to_stdout.start()
+    stdin_to_stderr = Thread(target=print_received)
+    stdin_to_stderr.daemon = True
+    stdin_to_stderr.start()
 
     for line in my_input:
         my_print("received localy: " + line)
