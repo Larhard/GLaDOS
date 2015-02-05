@@ -1,0 +1,35 @@
+### INSTALL ###
+
+install main dependencies
+
+  $ pip install -r requirements.txt
+
+if you want to use database other than sqlite3, you should install django
+backend for that base and configure glados/local_settings.py. In example to use
+postgres you can:
+
+  $ pip install -r requirements-postgresql.txt
+
+example config is in glados/example_local_settings.py
+
+and make all migrations (create tables etc.)
+
+  $ ./manage syncdb
+
+### RUN WEBGUI ###
+
+a) Django Test Server (easier but less effective):
+
+  $ ./manage.py runserver
+
+b) using FCGI
+
+  use django documentation
+
+### RUN CAROLINE ###
+
+  $ ./caroline.py
+
+### RUN WRAPPER ###
+
+  $ ./wrapper2.py
