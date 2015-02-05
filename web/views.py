@@ -234,3 +234,15 @@ def logout_view(request):
         return redirect('/')
 
 
+def program_list(request):
+    programs = request.user.program_set.all()
+    return render(request, 'web/program_list.html', {
+        'programs': programs,
+    })
+
+
+def program_details(request, program_id):
+    program = Program.objects.get(id=program_id)
+    return render(request, 'web/program_details.html', {
+        'program': program,
+    })
