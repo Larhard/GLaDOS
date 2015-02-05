@@ -176,8 +176,8 @@ class Judge:
                 self.p_to_server('lose ' + str(result[i][1]))
 
         for i in xrange(self.players_amount):
-            self.p_to_server('comment %d "Good job, it\'s only a game though"' % (i+1))
-            self.log('comment %d "Good job, it\'s only a game though"' % (i+1))
+            self.p_to_server('comment %d Good job, it\'s only a game though' % (i+1))
+            self.log('comment %d Good job, it\'s only a game though' % (i+1))
 
         self.log('game ended')
         self.p_to_server('end')
