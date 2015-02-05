@@ -114,7 +114,7 @@ class Match(object):
         self.judge.close()
 
     def execute(self, command):
-        rmatch = re.match('^\s*score\s+(?P<player_id>\d+)\s+(?P<score>-?\d+)\s*$', command)
+        rmatch = re.match('^\s*score\s+(?P<player_id>\d+)\s+(?P<score>-?\d+)\s*$', command, re.I)
         if rmatch:
             player_id = int(rmatch.group('player_id')) - 1
             score = int(rmatch.group('score'))
@@ -127,7 +127,7 @@ class Match(object):
             result.save()
             return True
 
-        rmatch = re.match('^\s*comment\s+(?P<player_id>\d+)\s(?P<comment>.*)$', command)
+        rmatch = re.match('^\s*comment\s+(?P<player_id>\d+)\s(?P<comment>.*)$', command, re.I)
         if rmatch:
             player_id = int(rmatch.group('player_id')) - 1
             comment = int(rmatch.group('comment'))
@@ -140,7 +140,7 @@ class Match(object):
             result.save()
             return True
 
-        rmatch = re.match('^\s*end\s*$', command)
+        rmatch = re.match('^\s*end\s*$', command, re.I)
         if rmatch:
             self.close()
             return True
