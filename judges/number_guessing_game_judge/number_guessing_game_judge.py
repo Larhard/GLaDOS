@@ -136,6 +136,8 @@ class Judge:
                         else:
                             if self.min_number <= number <= self.max_number:
                                 self.players[int(tmp[0]) - 1].initial_random = number
+                                self.log('player %d sent %d as initial_random'
+                                        % (int(tmp[0]) - 1, number))
                             else:
                                 pass
         self.number_to_guess = sum([a.initial_random for a in self.players]) \
