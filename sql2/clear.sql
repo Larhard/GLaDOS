@@ -1,0 +1,16 @@
+drop table if exists "django_migrations" cascade;
+drop table if exists "auth_permission" cascade;
+drop table if exists "django_content_type" cascade;
+drop table if exists "auth_group_permissions" cascade;
+drop table if exists "auth_group" cascade;
+drop table if exists "core_judge" cascade;
+drop table if exists "core_matchlog" cascade;
+drop table if exists "core_contest" cascade;
+drop table if exists "core_match" cascade;
+drop table if exists "glados_auth_gladosuser" cascade;
+drop table if exists "core_program" cascade;
+drop table if exists "core_programmatch" cascade;
+drop table if exists "django_admin_log" cascade;
+drop table if exists "glados_auth_gladosuser_groups" cascade;
+drop table if exists "glados_auth_gladosuser_user_permissions" cascade;
+drop table if exists "django_session" cascade;
