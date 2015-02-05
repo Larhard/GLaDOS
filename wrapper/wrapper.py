@@ -4,6 +4,7 @@ import sys
 from subprocess import PIPE, Popen
 from threading  import Thread
 from Queue import Queue, Empty
+from urllib import quote
 
 import socket
 from program_holder import ProgramHolder
@@ -45,7 +46,7 @@ class Wrapper:
         self.address = address
         self.contest_id = contest_id
         self.username = username
-        self.password = password
+        self.password = quote(password)
 
         self.program = ProgramHolder(self.program_name)
 
