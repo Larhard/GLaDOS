@@ -43,9 +43,9 @@ class Match(object):
         self.match.judge = self.contest.default_judge
         self.match.save()
 
-        self.log("match: judge: {}".format(self.contest.default_judge.path))
-        self.log("match: init_parameters:\n{}".format(self.contest.default_judge.init_parameters))
-        self.log("match: init lobby")
+        self.log("match: judge: {}".format(self.contest.default_judge.path), priority=-10)
+        self.log("match: init_parameters:\n{}".format(self.contest.default_judge.init_parameters), priority=-10)
+        self.log("match: init lobby", priority=-10)
 
     def register(self, result, conn):
         self.lobby.append(Match.User(result, conn))
@@ -93,10 +93,10 @@ class Match(object):
                 self.log(message, priority=priority)
                 return
 
-        self.log("judge: undefined message: {}".format(what))
+        self.log("judge: undefined message: {}".format(what), priority=10)
 
     def start(self):
-        self.log("match: start")
+        self.log("match: start", priority=-10)
         self.judge.send('-1 START')
 
     def log(self, what, priority=0):
