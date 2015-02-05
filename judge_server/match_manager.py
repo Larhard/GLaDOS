@@ -107,6 +107,8 @@ class Match(object):
         log.save()
 
     def close(self):
+        self.match.ended = True
+        self.match.save()
         self.judge.close()
 
     def execute(self, command):

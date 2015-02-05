@@ -163,7 +163,6 @@ def match_list(request, contest_id):
         'matches': matches,
     })
 
-
 @login_required
 def match_details(request, contest_id, match_id):
     contest = Contest.objects.get(id=contest_id)
