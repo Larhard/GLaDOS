@@ -130,7 +130,7 @@ class Match(object):
         rmatch = re.match('^\s*comment\s+(?P<player_id>\d+)\s(?P<comment>.*)$', command, re.I)
         if rmatch:
             player_id = int(rmatch.group('player_id')) - 1
-            comment = int(rmatch.group('comment'))
+            comment = rmatch.group('comment')
             try:
                 player = self.lobby[player_id]
             except IndexError:
@@ -176,9 +176,9 @@ class Match(object):
                 player = self.lobby[player_id]
             except IndexError:
                 return None
-            result = player.result
-            result.ties += 1
-            result.save()
+            program = player.program
+            program.ties += 1
+            program.save()
             return True
 
 

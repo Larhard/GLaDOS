@@ -62,6 +62,8 @@ class Judge:
 
     def set_parameters(self):
         self.players_amount = self.get_parameter('players')
+        if self.players_amount < 1:
+            raise ValueError("Player amount needs to be positive.")
         self.guess_limit = self.get_parameter('GUESS_LIMIT')
         self.min_number = self.get_parameter('MIN_NUMBER')
         self.max_number = self.get_parameter('MAX_NUMBER')
@@ -134,6 +136,8 @@ class Judge:
                         else:
                             if self.min_number <= number <= self.max_number:
                                 self.players[int(tmp[0]) - 1].initial_random = number
+                                self.log('player %d sent %d as initial_random'
+                                        % (int(tmp[0]) - 1, number))
                             else:
                                 pass
         self.number_to_guess = sum([a.initial_random for a in self.players]) \
@@ -151,6 +155,33 @@ class Judge:
         for i in xrange(self.players_amount):
             self.p_to_server('score %d %d' % (i+1, self.players[i].score))
 
+        result = []
+
+        for i in xrange(self.players_amount):
+            result.append([self.players[i].score, i+1])
+
+        result = list(reversed(sorted(result)))
+
+        if result[0][0] == result[1][0]:
+            for i in xrange(len(result)):
+                if result[0][0] != result[i][0]:
+                    self.p_to_server('tie ' + str(result[i][1]))
+                    self.log('tie ' + str(result[i][1]))
+                else:
+                    self.p_to_server('lose ' + str(result[i][1]))
+                    self.log('lose ' + str(result[i][1]))
+        else:
+            self.log('win ' + str(result[0][1]))
+            self.p_to_server('win ' + str(result[0][1]))
+            for i in xrange(1, len(result)):
+                self.log('lose ' + str(result[i][1]))
+                self.p_to_server('lose ' + str(result[i][1]))
+
+        for i in xrange(self.players_amount):
+            self.p_to_server('comment %d Good job, it\'s only a game though' % (i+1))
+            self.log('comment to %d Good job, it\'s only a game though' % (i+1))
+
+        self.log('game ended')
         self.p_to_server('end')
 
 
