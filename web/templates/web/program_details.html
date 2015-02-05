@@ -23,6 +23,10 @@
             <th>Defeats</th>
             <td>{% autoescape on %}{{ program.defeats }}{% endautoescape %}</td>
         </tr>
+        <tr>
+            <th>Score</th>
+            <td>{{ program.get_score.value }}</td>
+        </tr>
     </table>
 
     <table class="std">

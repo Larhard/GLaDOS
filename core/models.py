@@ -1,6 +1,7 @@
 from core.validators import Validator
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Sum
 from django.utils import timezone
 from glados_auth.models import GladosUser
 from utils.django.models import CleanModel
@@ -92,6 +93,9 @@ class Program(CleanModel):
     defeats = models.IntegerField(default=0)
     ties = models.IntegerField(default=0)
     source_code = models.FileField(null=True, blank=True)
+
+    def get_score(self):
+        return self.programmatch_set.aggregate(value=Sum('score'))
 
     def clean(self):
         errors = {}
