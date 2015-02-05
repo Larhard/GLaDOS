@@ -7,8 +7,9 @@ import re
 
 
 class MatchSession(object):
-    def __init__(self, program, conn, match, player_id):
-        self.program = program
+    def __init__(self, result, conn, match, player_id):
+        self.result = result
+        self.program = self.result.program
         self.user = self.program.user
         self.conn = conn
         self.match = match
@@ -21,8 +22,9 @@ class MatchSession(object):
 
 class Match(object):
     class User(object):
-        def __init__(self, program, conn):
-            self.program = program
+        def __init__(self, result, conn):
+            self.result = result
+            self.program = self.result.program
             self.user = self.program.user
             self.conn = conn
 
@@ -45,9 +47,9 @@ class Match(object):
         self.log("match: init_parameters:\n{}".format(self.contest.default_judge.init_parameters))
         self.log("match: init lobby")
 
-    def register(self, program, conn):
-        self.lobby.append(Match.User(program, conn))
-        return MatchSession(program=program, conn=conn, match=self, player_id=len(self.lobby))
+    def register(self, result, conn):
+        self.lobby.append(Match.User(result, conn))
+        return MatchSession(result=result, conn=conn, match=self, player_id=len(self.lobby))
 
     def is_ready(self):
         assert self.contest.players_count >= len(self.lobby)
@@ -78,8 +80,8 @@ class Match(object):
 
             # message to match manager
             if recipient == -1:
-                self.execute(message)
-                return
+                if self.execute(message):
+                    return
 
             # message to logs
             if recipient <= -2:
@@ -108,7 +110,36 @@ class Match(object):
         self.judge.close()
 
     def execute(self, command):
-        pass
+        rmatch = re.match('^\s*score\s+(?P<player_id>\d+)\s+(?P<score>-?\d+)\s*$', command)
+        if rmatch:
+            player_id = int(rmatch.group('player_id')) - 1
+            score = int(rmatch.group('score'))
+            try:
+                player = self.lobby[player_id]
+            except IndexError:
+                return None
+            result = player.result
+            result.score = score
+            result.save()
+            return True
+
+        rmatch = re.match('^\s*comment\s+(?P<player_id>\d+)\s(?P<comment>.*)$', command)
+        if rmatch:
+            player_id = int(rmatch.group('player_id')) - 1
+            comment = int(rmatch.group('comment'))
+            try:
+                player = self.lobby[player_id]
+            except IndexError:
+                return None
+            result = player.result
+            result.comment = comment
+            result.save()
+            return True
+
+        rmatch = re.match('^\s*end\s*$', command)
+        if rmatch:
+            self.close()
+            return True
 
 
 class MatchManager(object):
@@ -125,13 +156,13 @@ class MatchManager(object):
             match = self.matches[contest.id]
             assert match is not None
 
-            match_session = match.register(program=program, conn=conn)
-            assert match_session is not None
-
             result = core.models.ProgramMatch()
             result.program = program
             result.match = match.match  # TODO ok, that does not look good...
             result.save()
+
+            match_session = match.register(result=result, conn=conn)
+            assert match_session is not None
 
             if match.is_ready():
                 del self.matches[contest.id]
