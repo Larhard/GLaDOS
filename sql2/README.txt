@@ -1,3 +1,7 @@
+git repository:
+
+https://bitbucket.org/Larhard/glados
+
   #############
   ### INTRO ###
   #############
