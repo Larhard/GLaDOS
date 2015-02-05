@@ -25,7 +25,7 @@ class Bot:
         self.output(random.randint(self.total_min, self.total_max))
 
     def make_guess(self):
-        self.last_guess = (self.total_min + self.total_max) / 2
+        self.last_guess = (self.current_max + self.current_min) / 2
         self.output(self.last_guess)
         
     def get_feedback(self):
