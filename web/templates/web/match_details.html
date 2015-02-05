@@ -38,7 +38,7 @@
             <tr class="{% cycle 'row1' 'row2' %}">
                 <td>{{ log.priority }}</td>
                 <td>{{ log.body | linebreaksbr }}</td>
-                <td>{{ log.time }}</td>
+                <td>{{ log.time.ctime }}</td>
             </tr>
             {% endif %}
         {% endfor %}
