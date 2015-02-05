@@ -37,7 +37,7 @@
             {% if user.is_staff or log.priority == 0 %}
             <tr class="{% cycle 'row1' 'row2' %}">
                 <td>{{ log.priority }}</td>
-                <td>{{ log.body }}</td>
+                <td>{{ log.body | linebreaksbr }}</td>
                 <td>{{ log.time }}</td>
             </tr>
             {% endif %}
