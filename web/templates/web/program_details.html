@@ -32,6 +32,7 @@
     <table class="std">
         <tr class="head">
             <th class="min_width">id</th>
+            <th>Contest</th>
             <th>Score</th>
             <th>Comment</th>
             <th>Date</th>
@@ -41,6 +42,7 @@
         {% for result in program.programmatch_set.all %}
             <tr class="{% cycle 'row1' 'row2' %} href" data-href="{% url 'web:match_details' result.match.contest.id result.match.id %}">
                 <td>{{ result.match.id }}</td>
+                <td>{{ result.match.contest }}</td>
                 <td>{% autoescape on %}{{ result.score }}{% endautoescape %}</td>
                 <td>{% autoescape on %}{{ result.comment | linebreaksbr }}{% endautoescape %}</td>
                 <td>{% autoescape on %}{{ result.match.start.ctime }}{% endautoescape %}</td>
