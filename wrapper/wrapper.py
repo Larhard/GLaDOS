@@ -61,6 +61,14 @@ class Wrapper:
         else:
             print "Logged in"
 
+        self.socket.send("join "+contest_id+"\n")
+        tmp = self.socket.recv(1024)
+
+        if tmp.strip() != "OK":
+            raise Exception("Unexpected message from server: " + tmp)
+        else:
+            print "Contest joined"
+
         if program:
             self.socket.send("program "+program+"\n")
             tmp = self.socket.recv(1024)
@@ -69,14 +77,6 @@ class Wrapper:
                 raise Exception("Unexpected message from server: " + tmp)
             else:
                 print "Program set"
-
-        self.socket.send("join "+contest_id+"\n")
-        tmp = self.socket.recv(1024)
-
-        if tmp.strip() != "OK":
-            raise Exception("Unexpected message from server: " + tmp)
-        else:
-            print "Contest joined"
 
         self.socket.send("start\n")
         tmp = self.socket.recv(1024)

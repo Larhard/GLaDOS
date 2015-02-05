@@ -6,7 +6,9 @@
 {% endblock %}
 
 {% block content %}
-    Match already ended: {{ match.ended }}
+    {% if error %}
+        <div style="text-align: center; font-weight: bold">{{ error }}</div>
+    {% endif %}
     <table class="std">
         <tr class="head">
             <th>User</th>
@@ -15,7 +17,7 @@
             <th>Comment</th>
         </tr>
         {% for result in match.programmatch_set.all %}
-            <tr class="{% cycle 'row1' 'row2' %}">
+            <tr class="{% cycle 'row1' 'row2' %} href" data-href="{% url 'web:program_details' result.program.id %}">
                 <td>{{ result.program.user }}</td>
                 <td>{{ result.program }}</td>
                 <td>{{ result.score }}</td>
@@ -23,7 +25,10 @@
             </tr>
         {% endfor %}
     </table>
-    {% if user.is_staff or match.ended %}
+    {% if not match.ended  %}
+        <div style="font-weight: bold; text-align: center;">Match in progress</div>
+    {% endif %}
+    {% if logs and user.is_staff or match.ended %}
     Logs:
     <table class="std">
         <tr class="head">
@@ -32,11 +37,13 @@
             <th>Date</th>
         </tr>
         {% for log in logs %}
+            {% if user.is_staff or log.priority == 0 %}
             <tr class="{% cycle 'row1' 'row2' %}">
                 <td>{{ log.priority }}</td>
-                <td>{{ log.body }}</td>
-                <td>{{ log.time }}</td>
+                <td>{{ log.body | linebreaksbr }}</td>
+                <td>{{ log.time.ctime }}</td>
             </tr>
+            {% endif %}
         {% endfor %}
     </table>
     {% endif %}

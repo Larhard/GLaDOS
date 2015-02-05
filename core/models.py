@@ -1,6 +1,7 @@
 from core.validators import Validator
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Sum
 from django.utils import timezone
 from glados_auth.models import GladosUser
 from utils.django.models import CleanModel
@@ -47,6 +48,12 @@ class Match(CleanModel):
     start = models.DateTimeField(default=timezone.now)
     ended = models.BooleanField(default=False)
 
+    def get_user_set(self):
+        result = set()
+        for match_result in self.programmatch_set.all():
+            result.add(match_result.program.user)
+        return result
+
     def clean(self):
         errors = {}
         if self.judge.was_default_judge != True:
@@ -87,6 +94,19 @@ class Program(CleanModel):
     ties = models.IntegerField(default=0)
     source_code = models.FileField(null=True, blank=True)
 
+    def clean_name(self):
+        name = self.name
+        if name == '':
+            return None
+        return name
+
+    def clean_fields(self, exclude=None):
+        super(Program, self).clean_fields(exclude)
+        self.name = self.clean_name()
+
+    def get_score(self):
+        return self.programmatch_set.aggregate(value=Sum('score'))
+
     def clean(self):
         errors = {}
         if self.wins < 0:
@@ -103,7 +123,11 @@ class Program(CleanModel):
             raise ValidationError(errors)
 
     def __unicode__(self):
-        return "{} [{}]".format(self.name, self.id)
+        return self.name or "[{}]".format(self.id)
+
+    class Meta:
+        unique_together = ('name', 'user')
+
 
 
 class ProgramMatch(models.Model):

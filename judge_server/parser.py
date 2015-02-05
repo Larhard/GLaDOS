@@ -63,7 +63,7 @@ class InitParser(ParserBase):
             return "", self
 
     def cmd_program(self, what):
-        cmd = re.match('^\s*PROGRAM\s+(?P<program>[^\s])\s*$',
+        cmd = re.match('^\s*PROGRAM\s+(?P<program>[^\s]+)\s*$',
             what, re.I)
 
         if cmd:
@@ -74,14 +74,7 @@ class InitParser(ParserBase):
             if not self.contest:
                 return "JOIN REQUIRED\n", self
 
-            try:
-                program = Program.objects.get(contest=self.contest, user=self.user, name=program_name)
-            except Contest.DoesNotExist:
-                program = Program()
-                program.contest = self.contest
-                program.user = self.user
-                program.name = program_name
-                program.save()
+            program, created = Program.objects.get_or_create(contest=self.contest, user=self.user, name=program_name)
 
             self.program = program
 

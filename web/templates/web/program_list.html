@@ -1,0 +1,28 @@
+{% extends 'web/site.html' %}
+
+{% block title %}
+    {{ block.super }}
+    - Program List
+{% endblock %}
+
+{% block content %}
+    Programs:
+    <table class="std">
+        <tr class="head">
+            <th class="min_width">id</th>
+            <th>Name</th>
+            <th>Wins</th>
+            <th>Ties</th>
+            <th>Defeats</th>
+        </tr>
+        {% for program in programs %}
+            <tr class="{% cycle 'row1' 'row2' %} href" data-href="{% url 'web:program_details' program.id %}">
+                <td>{% autoescape on %}{{ program.id }}{% endautoescape %}</td>
+                <td>{% autoescape on %}{{ program.name }}{% endautoescape %}</td>
+                <td>{% autoescape on %}{{ program.wins }}{% endautoescape %}</td>
+                <td>{% autoescape on %}{{ program.ties }}{% endautoescape %}</td>
+                <td>{% autoescape on %}{{ program.defeats }}{% endautoescape %}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

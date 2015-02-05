@@ -43,11 +43,13 @@ class Match(object):
         self.match.judge = self.contest.default_judge
         self.match.save()
 
-        self.log("match: judge: {}".format(self.contest.default_judge.path))
-        self.log("match: init_parameters:\n{}".format(self.contest.default_judge.init_parameters))
-        self.log("match: init lobby")
+        self.log("match: judge: {}".format(self.contest.default_judge.path), priority=-10)
+        self.log("match: init_parameters:\n{}".format(self.contest.default_judge.init_parameters), priority=-10)
+        self.log("match: init lobby", priority=-10)
 
     def register(self, result, conn):
+        self.log("match: {} [{}] joins lobby with program {}"
+            .format(result.program.user, result.program.user_id, result.program), priority=-10)
         self.lobby.append(Match.User(result, conn))
         return MatchSession(result=result, conn=conn, match=self, player_id=len(self.lobby))
 
@@ -93,10 +95,10 @@ class Match(object):
                 self.log(message, priority=priority)
                 return
 
-        self.log("judge: undefined message: {}".format(what))
+        self.log("judge: undefined message: {}".format(what), priority=10)
 
     def start(self):
-        self.log("match: start")
+        self.log("match: start", priority=-10)
         self.judge.send('-1 START')
 
     def log(self, what, priority=0):
@@ -112,7 +114,7 @@ class Match(object):
         self.judge.close()
 
     def execute(self, command):
-        rmatch = re.match('^\s*score\s+(?P<player_id>\d+)\s+(?P<score>-?\d+)\s*$', command)
+        rmatch = re.match('^\s*score\s+(?P<player_id>\d+)\s+(?P<score>-?\d+)\s*$', command, re.I)
         if rmatch:
             player_id = int(rmatch.group('player_id')) - 1
             score = int(rmatch.group('score'))
@@ -125,7 +127,7 @@ class Match(object):
             result.save()
             return True
 
-        rmatch = re.match('^\s*comment\s+(?P<player_id>\d+)\s(?P<comment>.*)$', command)
+        rmatch = re.match('^\s*comment\s+(?P<player_id>\d+)\s(?P<comment>.*)$', command, re.I)
         if rmatch:
             player_id = int(rmatch.group('player_id')) - 1
             comment = int(rmatch.group('comment'))
@@ -138,9 +140,45 @@ class Match(object):
             result.save()
             return True
 
-        rmatch = re.match('^\s*end\s*$', command)
+        rmatch = re.match('^\s*end\s*$', command, re.I)
         if rmatch:
             self.close()
+            return True
+
+        rmatch = re.match('^\s*win\s+(?P<player_id>\d+)\s*', command, re.I)
+        if rmatch:
+            player_id = int(rmatch.group('player_id')) - 1
+            try:
+                player = self.lobby[player_id]
+            except IndexError:
+                return None
+            result = player.result
+            result.wins += 1
+            result.save()
+            return True
+
+        rmatch = re.match('^\s*lose\s+(?P<player_id>\d+)\s*', command, re.I)
+        if rmatch:
+            player_id = int(rmatch.group('player_id')) - 1
+            try:
+                player = self.lobby[player_id]
+            except IndexError:
+                return None
+            result = player.result
+            result.defeats += 1
+            result.save()
+            return True
+
+        rmatch = re.match('^\s*tie\s+(?P<player_id>\d+)\s*', command, re.I)
+        if rmatch:
+            player_id = int(rmatch.group('player_id')) - 1
+            try:
+                player = self.lobby[player_id]
+            except IndexError:
+                return None
+            result = player.result
+            result.ties += 1
+            result.save()
             return True
 
 

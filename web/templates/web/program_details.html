@@ -1,0 +1,55 @@
+{% extends 'web/site.html' %}
+
+{% block title %}
+    {{ block.super }}
+    - Program details
+{% endblock %}
+
+{% block content %}
+    <table class="std horizontal">
+        <tr>
+            <th>Program name:</th>
+            <td>{% autoescape on %}{{ program.name }}{% endautoescape %}</td>
+        </tr>
+        {% if program.wins or program.ties or program.defeats %}
+        <tr>
+            <th>Wins</th>
+            <td>{% autoescape on %}{{ program.wins }}{% endautoescape %}</td>
+        </tr>
+        <tr>
+            <th>Ties</th>
+            <td>{% autoescape on %}{{ program.ties }}{% endautoescape %}</td>
+        </tr>
+        <tr>
+            <th>Defeats</th>
+            <td>{% autoescape on %}{{ program.defeats }}{% endautoescape %}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <th>Score</th>
+            <td>{{ program.get_score.value }}</td>
+        </tr>
+    </table>
+
+    <table class="std">
+        <tr class="head">
+            <th class="min_width">id</th>
+            <th>Contest</th>
+            <th>Score</th>
+            <th>Comment</th>
+            <th>Date</th>
+            <th>Ended</th>
+        </tr>
+        Matches:
+        {% for result in program.programmatch_set.all %}
+            <tr class="{% cycle 'row1' 'row2' %} href" data-href="{% url 'web:match_details' result.match.contest.id result.match.id %}">
+                <td>{{ result.match.id }}</td>
+                <td>{{ result.match.contest }}</td>
+                <td>{% autoescape on %}{{ result.score }}{% endautoescape %}</td>
+                <td>{% autoescape on %}{{ result.comment | linebreaksbr }}{% endautoescape %}</td>
+                <td>{% autoescape on %}{{ result.match.start.ctime }}{% endautoescape %}</td>
+                <td>{{ result.match.ended }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
