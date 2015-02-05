@@ -48,6 +48,8 @@ class Match(object):
         self.log("match: init lobby", priority=-10)
 
     def register(self, result, conn):
+        self.log("match: {} [{}] joins lobby with program {}"
+            .format(result.program.user, result.program.user_id, result.program), priority=-10)
         self.lobby.append(Match.User(result, conn))
         return MatchSession(result=result, conn=conn, match=self, player_id=len(self.lobby))
 
