@@ -11,6 +11,7 @@
             <th>Program name:</th>
             <td>{% autoescape on %}{{ program.name }}{% endautoescape %}</td>
         </tr>
+        {% if program.wins or program.ties or program.defeats %}
         <tr>
             <th>Wins</th>
             <td>{% autoescape on %}{{ program.wins }}{% endautoescape %}</td>
@@ -23,6 +24,7 @@
             <th>Defeats</th>
             <td>{% autoescape on %}{{ program.defeats }}{% endautoescape %}</td>
         </tr>
+        {% endif %}
         <tr>
             <th>Score</th>
             <td>{{ program.get_score.value }}</td>
