@@ -176,7 +176,10 @@ def match_details(request, contest_id, match_id):
     if not request.user.is_staff and request.user not in match.get_user_set():
         error = "This is not your match"
     else:
-        logs = match.matchlog_set.order_by('time')
+        logs = match.matchlog_set
+        if not request.user.is_staff:
+            logs = logs.filter(priority=0)
+        logs = logs.order_by('time')
 
     return render(request, 'web/match_details.html', {
         'error': error,
