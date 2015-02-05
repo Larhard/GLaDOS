@@ -94,6 +94,16 @@ class Program(CleanModel):
     ties = models.IntegerField(default=0)
     source_code = models.FileField(null=True, blank=True)
 
+    def clean_name(self):
+        name = self.name
+        if name == '':
+            return None
+        return name
+
+    def clean_fields(self, exclude=None):
+        super(Program, self).clean_fields(exclude)
+        self.name = self.clean_name()
+
     def get_score(self):
         return self.programmatch_set.aggregate(value=Sum('score'))
 
@@ -113,7 +123,11 @@ class Program(CleanModel):
             raise ValidationError(errors)
 
     def __unicode__(self):
-        return "{} [{}]".format(self.name, self.id)
+        return self.name or "[{}]".format(self.id)
+
+    class Meta:
+        unique_together = ('name', 'user')
+
 
 
 class ProgramMatch(models.Model):
