@@ -145,6 +145,42 @@ class Match(object):
             self.close()
             return True
 
+        rmatch = re.match('^\s*win\s+(?P<player_id>\d+)\s*', command, re.I)
+        if rmatch:
+            player_id = int(rmatch.group('player_id')) - 1
+            try:
+                player = self.lobby[player_id]
+            except IndexError:
+                return None
+            result = player.result
+            result.wins += 1
+            result.save()
+            return True
+
+        rmatch = re.match('^\s*lose\s+(?P<player_id>\d+)\s*', command, re.I)
+        if rmatch:
+            player_id = int(rmatch.group('player_id')) - 1
+            try:
+                player = self.lobby[player_id]
+            except IndexError:
+                return None
+            result = player.result
+            result.defeats += 1
+            result.save()
+            return True
+
+        rmatch = re.match('^\s*tie\s+(?P<player_id>\d+)\s*', command, re.I)
+        if rmatch:
+            player_id = int(rmatch.group('player_id')) - 1
+            try:
+                player = self.lobby[player_id]
+            except IndexError:
+                return None
+            result = player.result
+            result.ties += 1
+            result.save()
+            return True
+
 
 class MatchManager(object):
     def __init__(self):
