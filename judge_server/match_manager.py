@@ -135,9 +135,9 @@ class Match(object):
                 player = self.lobby[player_id]
             except IndexError:
                 return None
-            program = player.program
-            program.comment = comment
-            program.save()
+            result = player.result
+            result.comment = comment
+            result.save()
             return True
 
         rmatch = re.match('^\s*end\s*$', command, re.I)
@@ -176,9 +176,9 @@ class Match(object):
                 player = self.lobby[player_id]
             except IndexError:
                 return None
-            result = player.result
-            result.ties += 1
-            result.save()
+            program = player.program
+            program.ties += 1
+            program.save()
             return True
 
 
