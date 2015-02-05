@@ -45,6 +45,7 @@ class Match(CleanModel):
     judge = models.ForeignKey(Judge)
     contest = models.ForeignKey(Contest)
     start = models.DateTimeField(default=timezone.now)
+    ended = models.BooleanField(default=False)
 
     def clean(self):
         errors = {}
